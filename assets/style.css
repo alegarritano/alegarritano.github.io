@@ -258,3 +258,8 @@ main { padding: 0; }
 
 /* opening paragraph of Who am I */
 .content p.intro { font-weight: 700; }
+
+/* networks page */
+.network { margin-top: 1.6rem; }
+.network h2 { margin-bottom: 0.4rem; }
+.network p:last-child { margin-top: 0.3rem; }
