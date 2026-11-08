@@ -255,3 +255,6 @@ main { padding: 0; }
 .content h2 + h3.year { margin-top: 0.9rem; }
 .content h3.year + .items { margin-top: 0; }
 .content h3.year + .items .item:first-child { border-top: 0; }
+
+/* opening paragraph of Who am I */
+.content p.intro { font-weight: 700; }
