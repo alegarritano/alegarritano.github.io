@@ -56,12 +56,12 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.4em 0; }
 @media (max-width: 560px) { .topbar .wrap { padding-bottom: 6px; } .topbar nav a { padding: 6px 9px; font-size: 0.9rem; } }
 
 /* banner strip */
-.strip { aspect-ratio: 1968 / 667; max-height: 440px; background: #011120 url('img/banner.webp') center / cover no-repeat; }
+.strip { aspect-ratio: 2000 / 222; max-height: 240px; background: #011122 url('img/banner.webp') center / cover no-repeat; }
 
 /* two column layout with sidebar */
 .layout { max-width: 1120px; margin: 0 auto; padding: 22px 20px 40px; display: grid; grid-template-columns: 1fr; gap: 28px; }
 .side { background: #fff; border-radius: 12px; box-shadow: 0 2px 14px rgba(0,0,0,0.14); padding: 16px; position: relative; z-index: 2; }
-@media (min-width: 880px) { .layout { grid-template-columns: 300px minmax(0, 1fr); gap: 56px; padding-top: 0; } .side { position: sticky; top: 74px; align-self: start; margin-top: -72px; } .content { padding-top: 30px; } }
+@media (min-width: 880px) { .layout { grid-template-columns: 300px minmax(0, 1fr); gap: 56px; padding-top: 0; } .side { position: sticky; top: 74px; align-self: start; margin-top: -16px; } .content { padding-top: 30px; } }
 .side .portrait { width: 100%; max-width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 10px; display: block; box-shadow: 0 2px 10px rgba(0,0,0,0.14); }
 .side .name { font-size: 1.3rem; font-weight: 700; margin: 14px 0 4px; line-height: 1.25; }
 .side .role { margin: 0 0 16px; display: grid; gap: 8px; color: var(--ink-2); font-size: 0.93rem; line-height: 1.45; }
