@@ -100,7 +100,7 @@ main { padding: 0; }
 .item { display: grid; grid-template-columns: 136px 1fr; gap: 20px; align-items: start; padding: 16px 0; border-bottom: 1px solid var(--rule); }
 .item:first-child { border-top: 1px solid var(--rule); }
 .thumb { width: 136px; height: 100px; object-fit: cover; border-radius: 6px; background: var(--bg-2); display: block; border: 1px solid var(--rule); }
-.item h3 { margin: 0 0 0.25em; font-size: 1.05rem; line-height: 1.35; }
+.item h3 { margin: 0 0 0.25em; font-size: 1.05rem; line-height: 1.35; text-align: justify; hyphens: auto; }
 .item h3 a { text-decoration: none; }
 .item h3 a:hover { text-decoration: underline; }
 .item .authors { display: block; color: var(--ink-2); font-size: 0.95rem; }
