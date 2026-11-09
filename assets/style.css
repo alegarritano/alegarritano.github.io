@@ -263,3 +263,6 @@ main { padding: 0; }
 .network { margin-top: 1.6rem; }
 .network h2 { margin-bottom: 0.4rem; }
 .network p:last-child { margin-top: 0.3rem; }
+
+/* phones get the 3 to 1 banner instead of the wide strip */
+@media (max-width: 560px) { .strip { aspect-ratio: 900 / 300; max-height: none; background-image: url('img/banner_mobile.webp'); } }
