@@ -11,11 +11,12 @@
 <meta property="og:description" content="Peer reviewed papers, preprints and science communication by Alessandro N. Garritano, with DOIs.">
 <meta property="og:url" content="https://www.alessandrogarritano.com/publications.html">
 <meta property="og:image" content="https://www.alessandrogarritano.com/assets/img/portrait.jpg">
-<link rel="stylesheet" href="assets/style.css?v=202611181245">
+<link rel="stylesheet" href="assets/style.css?v=202611191243">
 <link rel="icon" href="favicon.ico" sizes="48x48">
 <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script>document.documentElement.className = "js";</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -33,11 +34,32 @@
   </div>
 </header>
 <div class="strip" role="img" aria-label="Illustration of the carbon, nitrogen and phosphorus cycles. Seedlings rooted in soil under the sun on the left, a deep sea sponge with corals on the right, and three coloured loops carrying microbes and molecules between them."></div>
+<script>
+(function () {
+  var bar = document.querySelector('.topbar'), root = document.documentElement;
+  function set() { root.style.setProperty('--topbar-h', bar.offsetHeight + 'px'); }
+  set();
+  if (window.ResizeObserver) { new ResizeObserver(set).observe(bar); } else { window.addEventListener('resize', set); }
+  window.addEventListener('load', function () {
+    set();
+    if (location.hash.length < 2) { return; }
+    var t = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (!t) { return; }
+    var top = t.getBoundingClientRect().top, h = bar.offsetHeight;
+    if (top < h || top > h + 60) { t.scrollIntoView(); }
+  });
+})();
+</script>
 
 <main id="main"><div class="layout">
-<aside class="side">
+<aside class="side" aria-label="Profile">
   <img class="portrait" src="assets/img/portrait.jpg" alt="Portrait of Alessandro N. Garritano" width="240" height="240">
-  <p class="name">Alessandro N. Garritano</p>
+  <div class="who">
+    <p class="name">Alessandro N. Garritano</p>
+    <p class="role-short">Microbial ecologist and bioinformatician</p>
+    <p class="quick"><a class="email" href="mailto:alegarritano@gmail.com"><svg aria-hidden="true" focusable="false" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="stroke"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>Email</span></a><button type="button" class="more-toggle" aria-expanded="false" aria-controls="profile-more">Profile and links</button></p>
+  </div>
+  <div class="more" id="profile-more">
   <div class="role">
     <p>🦠 Microbial ecologist and bioinformatician</p>
     <p>🔬 Postdoctoral Research Associate, The University of Sydney</p>
@@ -54,6 +76,7 @@
       <li><a href="https://bsky.app/profile/alegarritano.bsky.social"><svg aria-hidden="true" focusable="false" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.815 2.736 3.713 3.66 6.383 3.364.136-.02.275-.039.415-.056-.138.022-.276.04-.415.056-3.912.58-7.387 2.005-2.83 7.078 5.013 5.19 6.87-1.113 7.823-4.308.953 3.195 2.05 9.271 7.733 4.308 4.267-4.308 1.172-6.498-2.74-7.078a8.741 8.741 0 0 1-.415-.056c.14.017.279.036.415.056 2.67.297 5.568-.628 6.383-3.364.246-.828.624-5.79.624-6.478 0-.69-.139-1.861-.902-2.206-.659-.298-1.664-.62-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8Z"/></svg><span>Bluesky</span></a></li>
       <li><a href="https://theconversation.com/profiles/alessandro-n-garritano-1388811"><svg aria-hidden="true" focusable="false" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.996 10.543c-.131-4.91-4.289-8.773-9.2-8.773H9.005a8.997 8.997 0 0 0-5.957 15.746L1.05 22.23l4.942-2.98c.95.36 1.964.524 3.012.524h6.024c5.04 0 9.099-4.156 8.969-9.23zm-8.937 5.958H9.07c-2.587 0-5.205-2.03-5.696-4.583a5.724 5.724 0 0 1 5.63-6.874h5.99c2.586 0 5.205 2.03 5.696 4.582.688 3.667-2.095 6.875-5.63 6.875z"/></svg><span>The Conversation</span></a></li>
   </ul>
+  </div>
 </aside>
 <div class="content">
 <h2 class="page-title">Publications</h2>
@@ -63,31 +86,31 @@
 <ul class="items">
   <li class="item"><img class="thumb" src="assets/img/thumbs/p-calyx.jpg" alt="" loading="lazy" width="136" height="100"><div>
     <h3><a href="https://doi.org/10.1186/s40168-026-02411-y">Ammonia oxidation and recalcitrant carbon degradation fuel mixotrophic growth in the symbiont community of a deep-sea sponge</a></h3>
-    <span class="authors"><strong>N. Garritano A</strong>, Hill LJ, Ribeiro B, Damasceno T, Medeiros L, Duarte G, Vilela CLS, Majzoub ME, Allen MA, Nappi J, Peixoto RS, Thomas T</span>
+    <span class="authors"><strong>N. Garritano, A</strong>, Hill LJ, Ribeiro B, Damasceno T, Medeiros L, Duarte G, Vilela CLS, Majzoub ME, Allen MA, Nappi J, Peixoto RS, Thomas T</span>
     <span class="venue"><span class="badge published">Published</span> <i>Microbiome</i> 14, 153 (2026)</span>
     <span class="links"><a href="https://doi.org/10.1186/s40168-026-02411-y">DOI 10.1186/s40168-026-02411-y</a><a href="research.html#p-calyx">Summary</a></span>
   </div></li>
   <li class="item"><img class="thumb" src="assets/img/thumbs/p-review.jpg" alt="" loading="lazy" width="136" height="100"><div>
     <h3><a href="https://doi.org/10.1146/annurev-marine-040824-032008">Symbiotic Ammonia Oxidation in the Marine Environment</a></h3>
-    <span class="authors">Thomas T, <strong>N. Garritano A</strong></span>
+    <span class="authors">Thomas T, <strong>N. Garritano, A</strong></span>
     <span class="venue"><span class="badge published">Published</span> <i>Annual Review of Marine Science</i> 18, 409–427 (2026)</span>
     <span class="links"><a href="https://doi.org/10.1146/annurev-marine-040824-032008">DOI 10.1146/annurev-marine-040824-032008</a><a href="research.html#p-review">Summary</a></span>
   </div></li>
   <li class="item"><img class="thumb" src="assets/img/thumbs/p-spongivicinota.jpg" alt="" loading="lazy" width="136" height="100"><div>
     <h3><a href="https://doi.org/10.1093/ismeco/ycag317">The novel, wide-spread sponge-associated phylum <i>Spongivicinota</i> shows metabolic complementarity to its sister-phylum <i>Latescibacterota</i></a></h3>
-    <span class="authors">Allen MA, <strong>N. Garritano A</strong>, Peixoto RS, Busch K, Slaby B, Hentschel U, Thomas T</span>
+    <span class="authors">Allen MA, <strong>N. Garritano, A</strong>, Peixoto RS, Busch K, Slaby B, Hentschel U, Thomas T</span>
     <span class="venue"><span class="badge published">Published</span> <i>ISME Communications</i> 6, ycag317 (2026)</span>
     <span class="links"><a href="https://doi.org/10.1093/ismeco/ycag317">DOI 10.1093/ismeco/ycag317</a><a href="research.html#p-spongivicinota">Summary</a></span>
   </div></li>
   <li class="item"><img class="thumb" src="assets/img/thumbs/p-endozoicomonas.jpg" alt="" loading="lazy" width="136" height="100"><div>
     <h3><a href="https://doi.org/10.1093/ismeco/ycag123">Resolving the evolutionary duality of marine symbionts: redefining the genus <i>Endozoicomonas</i> and proposing <i>Neoendozoicomonas</i> gen. nov.</a></h3>
-    <span class="authors">Modolon F, <strong>N. Garritano A</strong>, Hugenholtz P, Voolstra CR, Keller-Costa T, Costa R, Thomas T, Peixoto RS</span>
+    <span class="authors">Modolon F, <strong>N. Garritano, A</strong>, Hugenholtz P, Voolstra CR, Keller-Costa T, Costa R, Thomas T, Peixoto RS</span>
     <span class="venue"><span class="badge published">Published</span> <i>ISME Communications</i> 6, ycag123 (2026)</span>
     <span class="links"><a href="https://doi.org/10.1093/ismeco/ycag123">DOI 10.1093/ismeco/ycag123</a><a href="research.html#p-endozoicomonas">Summary</a></span>
   </div></li>
   <li class="item"><img class="thumb" src="assets/img/thumbs/p-octocorals.jpg" alt="" loading="lazy" width="136" height="100"><div>
     <h3><a href="https://doi.org/10.1093/sumbio/qvag048">Contrasting microbiomes in deep-sea scleractinian and octocoral species from the South Atlantic Ocean</a></h3>
-    <span class="authors">Hill LJ, Damasceno T, <strong>N. Garritano A</strong>, Modolon F, Medeiros L, Vilela CLS, Duarte G, Thomas T, Peixoto RS</span>
+    <span class="authors">Hill LJ, Damasceno T, <strong>N. Garritano, A</strong>, Modolon F, Medeiros L, Vilela CLS, Duarte G, Thomas T, Peixoto RS</span>
     <span class="venue"><span class="badge published">Published</span> <i>Sustainable Microbiology</i> 3, qvag048 (2026)</span>
     <span class="links"><a href="https://doi.org/10.1093/sumbio/qvag048">DOI 10.1093/sumbio/qvag048</a><a href="research.html#p-octocorals">Summary</a></span>
   </div></li>
@@ -96,7 +119,7 @@
 <ul class="items">
   <li class="item"><img class="thumb" src="assets/img/thumbs/p-crinoids.jpg" alt="" loading="lazy" width="136" height="100"><div>
     <h3><a href="https://doi.org/10.1186/s40168-025-02229-0">Putative promiscuous symbionts in deep-sea corals and crinoids may contribute to nitrogen cycling</a></h3>
-    <span class="authors">Modolon F, <strong>N. Garritano A</strong>, Hill LJ, Duarte G, Bendia A, De Moura R, Pellizari V, Thomas T, Peixoto RS</span>
+    <span class="authors">Modolon F, <strong>N. Garritano, A</strong>, Hill LJ, Duarte G, Bendia A, De Moura R, Pellizari V, Thomas T, Peixoto RS</span>
     <span class="venue"><span class="badge published">Published</span> <i>Microbiome</i> 13, 234 (2025)</span>
     <span class="links"><a href="https://doi.org/10.1186/s40168-025-02229-0">DOI 10.1186/s40168-025-02229-0</a><a href="research.html#p-crinoids">Summary</a></span>
   </div></li>
@@ -105,19 +128,19 @@
 <ul class="items">
   <li class="item"><img class="thumb" src="assets/img/thumbs/p-holobiont.jpg" alt="" loading="lazy" width="136" height="100"><div>
     <h3><a href="https://doi.org/10.1093/ismejo/wrae197">Simple Porifera holobiont reveals complex interactions between the host, an archaeon, a bacterium, and a phage</a></h3>
-    <span class="authors"><strong>N. Garritano A</strong>, Zhang Z, Jia Y, Allen MA, Hill LJ, Kuzhiumparambil U, Hinkley C, Raina JB, Peixoto RS, Thomas T</span>
+    <span class="authors"><strong>N. Garritano, A</strong>, Zhang Z, Jia Y, Allen MA, Hill LJ, Kuzhiumparambil U, Hinkley C, Raina JB, Peixoto RS, Thomas T</span>
     <span class="venue"><span class="badge published">Published</span> <i>The ISME Journal</i> 18, wrae197 (2024)</span>
     <span class="links"><a href="https://doi.org/10.1093/ismejo/wrae197">DOI 10.1093/ismejo/wrae197</a><a href="research.html#p-holobiont">Summary</a></span>
   </div></li>
   <li class="item"><img class="thumb" src="assets/img/thumbs/p-probiotics.jpg" alt="" loading="lazy" width="136" height="100"><div>
     <h3><a href="https://doi.org/10.1038/s41522-024-00584-8">Not only for corals: exploring the uptake of beneficial microorganisms for corals by sponges</a></h3>
-    <span class="authors">Ribeiro B, <strong>N. Garritano A</strong>, Raimundo I, Delgadillo-Ordoñez N, Nappi J, Garcias-Bonet N, Villela H, Thomas T, Klautau M, Peixoto RS</span>
+    <span class="authors">Ribeiro B, <strong>N. Garritano, A</strong>, Raimundo I, Delgadillo-Ordoñez N, Nappi J, Garcias-Bonet N, Villela H, Thomas T, Klautau M, Peixoto RS</span>
     <span class="venue"><span class="badge published">Published</span> <i>npj Biofilms and Microbiomes</i> 10, 125 (2024)</span>
     <span class="links"><a href="https://doi.org/10.1038/s41522-024-00584-8">DOI 10.1038/s41522-024-00584-8</a><a href="research.html#p-probiotics">Summary</a></span>
   </div></li>
   <li class="item"><img class="thumb" src="assets/img/thumbs/p-phycosphere.jpg" alt="" loading="lazy" width="136" height="100"><div>
     <h3><a href="https://doi.org/10.1016/j.isci.2024.109531">Bacteria associated with the in hospite Symbiodiniaceae’s phycosphere</a></h3>
-    <span class="authors">Hill LJ, Messias CSMA, Vilela CLS, <strong>N. Garritano A</strong>, Villela HDM, do Carmo FL, Thomas T, Peixoto RS</span>
+    <span class="authors">Hill LJ, Messias CSMA, Vilela CLS, <strong>N. Garritano, A</strong>, Villela HDM, do Carmo FL, Thomas T, Peixoto RS</span>
     <span class="venue"><span class="badge published">Published</span> <i>iScience</i> 27, 109531 (2024)</span>
     <span class="links"><a href="https://doi.org/10.1016/j.isci.2024.109531">DOI 10.1016/j.isci.2024.109531</a><a href="research.html#p-phycosphere">Summary</a></span>
   </div></li>
@@ -126,7 +149,7 @@
 <ul class="items">
   <li class="item"><img class="thumb" src="assets/img/thumbs/p-species.jpg" alt="" loading="lazy" width="136" height="100"><div>
     <h3><a href="https://doi.org/10.1038/s41396-023-01439-4">Species-specific relationships between deep sea sponges and their symbiotic <i>Nitrosopumilaceae</i></a></h3>
-    <span class="authors"><strong>N. Garritano A</strong>, Majzoub ME, Ribeiro B, Damasceno T, Modolon F, Messias C, Vilela C, Duarte G, Hill L, Peixoto R, Thomas T</span>
+    <span class="authors"><strong>N. Garritano, A</strong>, Majzoub ME, Ribeiro B, Damasceno T, Modolon F, Messias C, Vilela C, Duarte G, Hill L, Peixoto R, Thomas T</span>
     <span class="venue"><span class="badge published">Published</span> <i>The ISME Journal</i> 17, 1517–1519 (2023)</span>
     <span class="links"><a href="https://doi.org/10.1038/s41396-023-01439-4">DOI 10.1038/s41396-023-01439-4</a><a href="research.html#p-species">Summary</a></span>
   </div></li>
@@ -135,7 +158,7 @@
 <ul class="items">
   <li class="item"><img class="thumb" src="assets/img/thumbs/p-cfp.jpg" alt="" loading="lazy" width="136" height="100"><div>
     <h3><a href="https://doi.org/10.1093/pnasnexus/pgac226">Carbon fixation pathways across the bacterial and archaeal tree of life</a></h3>
-    <span class="authors"><strong>N. Garritano A</strong>, Song W, Thomas T</span>
+    <span class="authors"><strong>N. Garritano, A</strong>, Song W, Thomas T</span>
     <span class="venue"><span class="badge published">Published</span> <i>PNAS Nexus</i> 1, pgac226 (2022)</span>
     <span class="links"><a href="https://doi.org/10.1093/pnasnexus/pgac226">DOI 10.1093/pnasnexus/pgac226</a><a href="https://github.com/alegarritano/HMM_CFP">Code</a><a href="research.html#p-cfp">Summary</a></span>
   </div></li>
@@ -144,7 +167,7 @@
 <ul class="items">
   <li class="item"><img class="thumb" src="assets/img/thumbs/p-pome-review.jpg" alt="" loading="lazy" width="136" height="100"><div>
     <h3><a href="https://doi.org/10.1016/j.rser.2018.04.031">Palm oil mill effluent (POME) as raw material for biohydrogen and methane production via dark fermentation</a></h3>
-    <span class="authors"><strong>N. Garritano A</strong>, Faber MO, De Sá LRV, Ferreira-Leitão VS</span>
+    <span class="authors"><strong>N. Garritano, A</strong>, Faber MO, De Sá LRV, Ferreira-Leitão VS</span>
     <span class="venue"><span class="badge published">Published</span> <i>Renewable and Sustainable Energy Reviews</i> 92, 676–684 (2018)</span>
     <span class="links"><a href="https://doi.org/10.1016/j.rser.2018.04.031">DOI 10.1016/j.rser.2018.04.031</a><a href="research.html#p-pome-review">Summary</a></span>
   </div></li>
@@ -153,7 +176,7 @@
 <ul class="items">
   <li class="item"><img class="thumb" src="assets/img/thumbs/p-pome-h2.jpg" alt="" loading="lazy" width="136" height="100"><div>
     <h3><a href="https://doi.org/10.1016/j.ijhydene.2017.10.025">Efficient biohydrogen production via dark fermentation from hydrolized palm oil mill effluent by non-commercial enzyme preparation</a></h3>
-    <span class="authors"><strong>N. Garritano A</strong>, De Sá LRV, Aguieiras ÉCG, Freire DMG, Ferreira-Leitão VS</span>
+    <span class="authors"><strong>N. Garritano, A</strong>, De Sá LRV, Aguieiras ÉCG, Freire DMG, Ferreira-Leitão VS</span>
     <span class="venue"><span class="badge published">Published</span> <i>International Journal of Hydrogen Energy</i> 42, 29166–29174 (2017)</span>
     <span class="links"><a href="https://doi.org/10.1016/j.ijhydene.2017.10.025">DOI 10.1016/j.ijhydene.2017.10.025</a><a href="research.html#p-pome-h2">Summary</a></span>
   </div></li>
@@ -163,25 +186,25 @@
 <ul class="items">
   <li class="item"><img class="thumb" src="assets/img/thumbs/p-hifitaxa.jpg" alt="" loading="lazy" width="136" height="100"><div>
     <h3><a href="https://doi.org/10.64898/2026.11.03.763332">HiFiTaxa: a reproducible analysis pipeline for full length 16S rRNA gene and ITS amplicon sequencing from PacBio reads</a></h3>
-    <span class="authors"><strong>N. Garritano A</strong>, Modolon F, Warren CR</span>
+    <span class="authors"><strong>N. Garritano, A</strong>, Modolon F, Warren CR</span>
     <span class="venue"><span class="badge review">Under review</span> <i>bioRxiv</i> (2026). Under review</span>
     <span class="links"><a href="https://doi.org/10.64898/2026.11.03.763332">DOI 10.64898/2026.11.03.763332</a><a href="https://github.com/alegarritano/HiFiTaxa">Code</a></span>
   </div></li>
   <li class="item"><img class="thumb" src="assets/img/thumbs/p-scidata.jpg" alt="" loading="lazy" width="136" height="100"><div>
     <h3>Metagenome-assembled genomes and viral sequences from deep-sea sponges</h3>
-    <span class="authors">Allen MA, <strong>N. Garritano A</strong>, Fraser VL, Peixoto RS, Busch K, Slaby B, Hentschel U, Thomas T</span>
+    <span class="authors">Allen MA, <strong>N. Garritano, A</strong>, Fraser VL, Peixoto RS, Busch K, Slaby B, Hentschel U, Thomas T</span>
     <span class="venue"><span class="badge accepted"><i>In press</i></span> <i>Scientific Data</i>, in press (2026). No DOI yet</span>
     <span class="links"><a href="research.html#p-scidata">Summary</a></span>
   </div></li>
   <li class="item"><img class="thumb" src="assets/img/thumbs/p-roager.jpg" alt="" loading="lazy" width="136" height="100"><div>
     <h3><a href="https://doi.org/10.64898/2026.02.09.704904">Dual transcriptomics reveal commensal interactions between microalgae and phycosphere bacteria</a></h3>
-    <span class="authors">Roager L, Schostag M, <strong>N. Garritano A</strong>, Gram L, Egan S</span>
+    <span class="authors">Roager L, Schostag M, <strong>N. Garritano, A</strong>, Gram L, Egan S</span>
     <span class="venue"><span class="badge review">Under review</span> <i>bioRxiv</i> (2026). Under review</span>
     <span class="links"><a href="https://doi.org/10.64898/2026.02.09.704904">DOI 10.64898/2026.02.09.704904</a><a href="research.html#p-roager">Summary</a></span>
   </div></li>
   <li class="item"><img class="thumb" src="assets/img/thumbs/p-amplinkone.jpg" alt="" loading="lazy" width="136" height="100"><div>
     <h3>AmplinkOne: a reproducible and modular R workflow for downstream analysis of microbial marker-gene amplicon sequencing data</h3>
-    <span class="authors"><strong>N. Garritano A</strong>, Warren C, Holmes A, Liu S, Li J</span>
+    <span class="authors"><strong>N. Garritano, A</strong>, Warren C, Holmes A, Liu S, Li J</span>
     <span class="venue"><span class="badge review">Under review</span> Under review (2026). No DOI yet</span>
   </div></li>
 </ul>
@@ -190,7 +213,7 @@
 <ul class="items">
   <li class="item"><img class="thumb" src="assets/img/thumbs/p-conversation.jpg" alt="" loading="lazy" width="136" height="100"><div>
     <h3><a href="https://theconversation.com/deep-sea-sponges-survive-in-complete-darkness-in-ways-we-didnt-know-before-279223">Deep-sea sponges survive in complete darkness in ways we didn’t know before</a></h3>
-    <span class="authors"><strong>N. Garritano A</strong>, Thomas T</span>
+    <span class="authors"><strong>N. Garritano, A</strong>, Thomas T</span>
     <span class="venue"><i>The Conversation</i>, 27 May 2026. <a href="https://theconversation.com/esponjas-de-aguas-profundas-sobrevivem-na-escuridao-total-de-maneiras-surpreendentes-284049">Also published in Portuguese</a></span>
     <span class="links"><a href="https://doi.org/10.64628/aa.6aywrmmrf">DOI 10.64628/aa.6aywrmmrf</a></span>
   </div></li>
@@ -202,6 +225,16 @@
 <footer class="site-footer">
   <div class="wrap">© 2026 Alessandro N. Garritano · Sydney, Australia · Updated November 2026</div>
 </footer>
+<script>
+(function () {
+  var b = document.querySelector('.more-toggle'), side = document.querySelector('.side');
+  if (!b || !side) { return; }
+  b.addEventListener('click', function () {
+    var open = side.classList.toggle('open');
+    b.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+})();
+</script>
 <script data-goatcounter="https://alegarritano.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

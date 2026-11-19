@@ -11,11 +11,12 @@
 <meta property="og:description" content="Contact details and profiles for Alessandro N. Garritano, microbial ecologist at the University of Sydney.">
 <meta property="og:url" content="https://www.alessandrogarritano.com/contact.html">
 <meta property="og:image" content="https://www.alessandrogarritano.com/assets/img/portrait.jpg">
-<link rel="stylesheet" href="assets/style.css?v=202611181245">
+<link rel="stylesheet" href="assets/style.css?v=202611191243">
 <link rel="icon" href="favicon.ico" sizes="48x48">
 <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script>document.documentElement.className = "js";</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -33,11 +34,32 @@
   </div>
 </header>
 <div class="strip" role="img" aria-label="Illustration of the carbon, nitrogen and phosphorus cycles. Seedlings rooted in soil under the sun on the left, a deep sea sponge with corals on the right, and three coloured loops carrying microbes and molecules between them."></div>
+<script>
+(function () {
+  var bar = document.querySelector('.topbar'), root = document.documentElement;
+  function set() { root.style.setProperty('--topbar-h', bar.offsetHeight + 'px'); }
+  set();
+  if (window.ResizeObserver) { new ResizeObserver(set).observe(bar); } else { window.addEventListener('resize', set); }
+  window.addEventListener('load', function () {
+    set();
+    if (location.hash.length < 2) { return; }
+    var t = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (!t) { return; }
+    var top = t.getBoundingClientRect().top, h = bar.offsetHeight;
+    if (top < h || top > h + 60) { t.scrollIntoView(); }
+  });
+})();
+</script>
 
 <main id="main"><div class="layout">
-<aside class="side">
+<aside class="side" aria-label="Profile">
   <img class="portrait" src="assets/img/portrait.jpg" alt="Portrait of Alessandro N. Garritano" width="240" height="240">
-  <p class="name">Alessandro N. Garritano</p>
+  <div class="who">
+    <p class="name">Alessandro N. Garritano</p>
+    <p class="role-short">Microbial ecologist and bioinformatician</p>
+    <p class="quick"><a class="email" href="mailto:alegarritano@gmail.com"><svg aria-hidden="true" focusable="false" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="stroke"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>Email</span></a><button type="button" class="more-toggle" aria-expanded="false" aria-controls="profile-more">Profile and links</button></p>
+  </div>
+  <div class="more" id="profile-more">
   <div class="role">
     <p>🦠 Microbial ecologist and bioinformatician</p>
     <p>🔬 Postdoctoral Research Associate, The University of Sydney</p>
@@ -54,6 +76,7 @@
       <li><a href="https://bsky.app/profile/alegarritano.bsky.social"><svg aria-hidden="true" focusable="false" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.815 2.736 3.713 3.66 6.383 3.364.136-.02.275-.039.415-.056-.138.022-.276.04-.415.056-3.912.58-7.387 2.005-2.83 7.078 5.013 5.19 6.87-1.113 7.823-4.308.953 3.195 2.05 9.271 7.733 4.308 4.267-4.308 1.172-6.498-2.74-7.078a8.741 8.741 0 0 1-.415-.056c.14.017.279.036.415.056 2.67.297 5.568-.628 6.383-3.364.246-.828.624-5.79.624-6.478 0-.69-.139-1.861-.902-2.206-.659-.298-1.664-.62-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8Z"/></svg><span>Bluesky</span></a></li>
       <li><a href="https://theconversation.com/profiles/alessandro-n-garritano-1388811"><svg aria-hidden="true" focusable="false" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.996 10.543c-.131-4.91-4.289-8.773-9.2-8.773H9.005a8.997 8.997 0 0 0-5.957 15.746L1.05 22.23l4.942-2.98c.95.36 1.964.524 3.012.524h6.024c5.04 0 9.099-4.156 8.969-9.23zm-8.937 5.958H9.07c-2.587 0-5.205-2.03-5.696-4.583a5.724 5.724 0 0 1 5.63-6.874h5.99c2.586 0 5.205 2.03 5.696 4.582.688 3.667-2.095 6.875-5.63 6.875z"/></svg><span>The Conversation</span></a></li>
   </ul>
+  </div>
 </aside>
 <div class="content">
 <div class="wrap prose">
@@ -78,6 +101,16 @@
 <footer class="site-footer">
   <div class="wrap">© 2026 Alessandro N. Garritano · Sydney, Australia · Updated November 2026</div>
 </footer>
+<script>
+(function () {
+  var b = document.querySelector('.more-toggle'), side = document.querySelector('.side');
+  if (!b || !side) { return; }
+  b.addEventListener('click', function () {
+    var open = side.classList.toggle('open');
+    b.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+})();
+</script>
 <script data-goatcounter="https://alegarritano.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
