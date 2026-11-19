@@ -294,3 +294,4 @@ nav.subnav { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 0.95rem; 
 
 /* phones: body copy is left aligned, full justification leaves wide gaps in narrow columns */
 @media (max-width: 560px) { .content p, .content .pub .summary, .content .item .summary, .content .tool p { text-align: start; } }
+@media (max-width: 560px) { .item h3 { text-align: start; hyphens: manual; } }
