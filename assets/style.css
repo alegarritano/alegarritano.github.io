@@ -296,8 +296,9 @@ nav.subnav { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 0.95rem; 
 @media (max-width: 560px) { .content p, .content .pub .summary, .content .item .summary, .content .tool p { text-align: start; } }
 @media (max-width: 560px) { .item h3 { text-align: start; hyphens: manual; } }
 
-/* citation and attention badges on the publications page */
-.item .metrics { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 7px; line-height: 1; }
-.item .metrics:empty { display: none; }
+/* citation and attention badges, on the same line as the DOI and Summary links */
+.item .links { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+.item .links a + a { margin-left: 0; }
+.item .metrics { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; line-height: 1; }
 .item .metrics > span { display: inline-block; }
 .item .metrics a { text-decoration: none; }
