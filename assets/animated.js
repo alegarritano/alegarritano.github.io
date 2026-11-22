@@ -12,9 +12,6 @@
     var hintL = document.createElement('span'); hintL.className = 'cycle-hint left'; hintL.textContent = 'Soils';
     var hintR = document.createElement('span'); hintR.className = 'cycle-hint right'; hintR.textContent = 'Marine hosts';
     strip.appendChild(hintL); strip.appendChild(hintR);
-    var btn = document.createElement('button');
-    btn.type = 'button'; btn.className = 'cycle-pause';
-    strip.appendChild(btn);
 
     var ctx = cv.getContext('2d'), W = 0, H = 0, dpr = 1;
     function size() {
@@ -45,9 +42,6 @@
       return [(L.cx + x * c - y * s) * W, (L.cy + x * s + y * c) * H];
     }
     var running = !reduce, last = 0;
-    function label() { btn.textContent = running ? '❚❚' : '▶'; btn.setAttribute('aria-label', running ? 'Pause the animation' : 'Play the animation'); }
-    label();
-    btn.addEventListener('click', function () { running = !running; label(); if (running) { last = 0; requestAnimationFrame(frame); } });
 
     function draw() {
       ctx.clearRect(0, 0, W, H);
@@ -106,16 +100,11 @@
   /* depth in metres for each section, as a scale for the story, not sampling depths */
   var stops = [
     ['soil', 0], ['tools', 0], ['phd', 150], ['symbiosis', 1000], ['identity', 1000],
-    ['hosts', 600], ['carbon-fixation', 1000], ['masters', 0]
+    ['hosts', 1000], ['carbon-fixation', 1000], ['masters', 1000]
   ].map(function (s) { return { el: document.getElementById(s[0]), d: s[1] }; }).filter(function (s) { return s.el; });
 
-  var gauge = document.createElement('div');
-  gauge.className = 'gauge'; gauge.setAttribute('aria-hidden', 'true');
-  gauge.innerHTML = '<span class="depth">0 m</span><div class="tube"><span class="bead"></span></div><span class="zone">Sunlit zone</span>';
-  document.body.appendChild(gauge);
   var line = document.createElement('div'); line.className = 'depth-line'; line.setAttribute('aria-hidden', 'true');
   document.body.appendChild(line);
-  var dEl = gauge.querySelector('.depth'), zEl = gauge.querySelector('.zone'), bead = gauge.querySelector('.bead');
 
   function mix(a, b, f) { return a.map(function (v, i) { return Math.round(v + (b[i] - v) * f); }); }
   var SURF = [246, 240, 228], TWI = [143, 182, 196], DEEP = [4, 22, 40];
@@ -138,10 +127,6 @@
     ticking = false;
     var d = depthNow(), c = colour(d), css = 'rgb(' + c.join(',') + ')';
     document.body.style.setProperty('--depth-bg', css);
-    document.body.style.setProperty('--gauge-ink', d > 450 ? '#e8f1f4' : '#1f4e5f');
-    dEl.textContent = Math.round(d / 10) * 10 + ' m';
-    zEl.textContent = d < 200 ? 'Sunlit zone' : d < 1000 ? 'Twilight zone' : 'Midnight zone';
-    bead.style.top = (Math.min(d, 1000) / 1000 * 100) + '%';
   }
   window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
   window.addEventListener('resize', update);

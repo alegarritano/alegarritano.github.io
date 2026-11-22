@@ -28,10 +28,8 @@
 
   /* ---------- Networks: where co-authors on the published papers are based ---------- */
   if (page === 'networks') {
-    var title = document.querySelector('.content .page-title');
-    var intro = title && title.parentNode.querySelector('p.intro');
-    var anchor = intro || title;
-    if (!anchor) { return; }
+    var fig = document.getElementById('collab-map');
+    if (!fig) { return; }
     fetch('assets/collaborations.json').then(function (r) { return r.json(); }).then(function (data) {
       /* the map runs from 170 W to 190 E so that Sydney, Europe, Brazil and French Polynesia all sit on one sheet */
       var LON0 = -170, LON1 = 190, LAT0 = 72, LAT1 = -52, W = 960;
@@ -69,22 +67,93 @@
           '<circle class="dot" cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="' + r.toFixed(1) + '"/></g>';
         var L = LABEL[c.city];
         if (L) {
-          labels += '<text class="pin-label" style="--d:' + (c === home ? 0 : 500 + i * 140) + 'ms" x="' + (p[0] + L[0]).toFixed(1) + '" y="' + (p[1] + L[1]).toFixed(1) + '" text-anchor="' + L[2] + '">' + c.city + '</text>';
+          labels += '<text class="pin-label" data-p="' + p[0].toFixed(1) + ',' + p[1].toFixed(1) + ',' + L[0] + ',' + L[1] + '" style="--d:' + (c === home ? 0 : 500 + i * 140) + 'ms" x="' + (p[0] + L[0]).toFixed(1) + '" y="' + (p[1] + L[1]).toFixed(1) + '" text-anchor="' + L[2] + '">' + c.city + '</text>';
         }
       });
       var grat = '';
       for (var lon2 = -150; lon2 <= 180; lon2 += 30) { var x = P(lon2, 0)[0]; grat += '<line x1="' + x.toFixed(1) + '" y1="0" x2="' + x.toFixed(1) + '" y2="' + H + '"/>'; }
       for (var lat = 60; lat >= -45; lat -= 15) { var y = P(0, lat)[1]; grat += '<line x1="0" y1="' + y.toFixed(1) + '" x2="' + W + '" y2="' + y.toFixed(1) + '"' + (lat === 0 ? ' class="eq"' : '') + '/>'; }
       var n = list.length - 1;
-      var fig = document.createElement('figure');
-      fig.className = 'netmap';
       fig.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="World map of co-author institutions, linked to Sydney: ' +
         list.filter(function (c) { return c !== home; }).map(function (c) { return c.city; }).join(', ') + '">' +
         '<defs><clipPath id="mapclip"><rect width="' + W + '" height="' + H + '" rx="10"/></clipPath></defs><g clip-path="url(#mapclip)">' +
         '<rect width="' + W + '" height="' + H + '" class="sea"/><g class="land"></g><g class="grat">' + grat + '</g>' + arcs + dots + labels + '</g></svg>' +
-        '<figcaption>Where co-authors on my papers are based, ' + data.institutions.length + ' institutions in ' + n + ' other cities. Point at a dot for the institutions. Source: OpenAlex affiliations for the papers with a DOI on the Publications page.</figcaption>';
-      anchor.parentNode.insertBefore(fig, anchor.nextSibling);
+        '<figcaption>' + data.institutions.length + ' institutions in ' + n + ' cities besides Sydney. Point at a dot for the institutions, and use the buttons or double click to zoom. Source: OpenAlex affiliations for the papers with a DOI on the Publications page.</figcaption>';
       if (reduce) { fig.classList.add('in'); } else { onView(fig, function () { fig.classList.add('in'); }, 0.3); }
+
+      /* zoom and pan: buttons, double click, trackpad pinch (ctrl + wheel), drag, and two finger pinch on touch screens.
+         Dots, rings and labels keep their size on screen while the map grows. */
+      var svg = fig.querySelector('svg'), view = { x: 0, y: 0, w: W, h: H }, MAXZ = 8;
+      var tools = document.createElement('div');
+      tools.className = 'map-tools';
+      tools.innerHTML = '<button type="button" data-z="in" aria-label="Zoom in">+</button><button type="button" data-z="out" aria-label="Zoom out">−</button><button type="button" data-z="reset" aria-label="Show the whole map">⟲</button>';
+      fig.insertBefore(tools, fig.querySelector('figcaption'));
+      var base = [];
+      svg.querySelectorAll('.pin circle').forEach(function (c) { base.push([c, +c.getAttribute('r')]); });
+      var labels0 = [];
+      svg.querySelectorAll('.pin-label').forEach(function (t) { labels0.push([t].concat(t.getAttribute('data-p').split(',').map(Number))); });
+      function apply() {
+        var z = W / view.w;
+        svg.setAttribute('viewBox', view.x.toFixed(1) + ' ' + view.y.toFixed(1) + ' ' + view.w.toFixed(1) + ' ' + view.h.toFixed(1));
+        base.forEach(function (b) { b[0].setAttribute('r', (b[1] / Math.sqrt(z)).toFixed(2)); });
+        labels0.forEach(function (l) { l[0].setAttribute('x', (l[1] + l[3] / z).toFixed(1)); l[0].setAttribute('y', (l[2] + l[4] / z).toFixed(1)); });
+        svg.style.setProperty('--z', z);
+        fig.classList.toggle('zoomed', z > 1.01);
+      }
+      function zoomAt(f, cx, cy) {
+        var nw = Math.min(W, Math.max(W / MAXZ, view.w / f)), nh = nw * H / W;
+        var rx = (cx - view.x) / view.w, ry = (cy - view.y) / view.h;
+        view.x = cx - rx * nw; view.y = cy - ry * nh; view.w = nw; view.h = nh;
+        clamp(); apply();
+      }
+      function clamp() {
+        view.x = Math.min(W - view.w, Math.max(0, view.x));
+        view.y = Math.min(H - view.h, Math.max(0, view.y));
+      }
+      function toMap(ev) {
+        var r = svg.getBoundingClientRect();
+        return [view.x + (ev.clientX - r.left) / r.width * view.w, view.y + (ev.clientY - r.top) / r.height * view.h];
+      }
+      tools.addEventListener('click', function (e) {
+        var z = e.target.getAttribute('data-z');
+        if (z === 'in') { zoomAt(1.6, view.x + view.w / 2, view.y + view.h / 2); }
+        if (z === 'out') { zoomAt(1 / 1.6, view.x + view.w / 2, view.y + view.h / 2); }
+        if (z === 'reset') { view = { x: 0, y: 0, w: W, h: H }; apply(); }
+      });
+      svg.addEventListener('dblclick', function (e) { var p = toMap(e); zoomAt(e.shiftKey ? 1 / 1.8 : 1.8, p[0], p[1]); });
+      svg.addEventListener('wheel', function (e) {
+        if (!e.ctrlKey) { return; }
+        e.preventDefault();
+        var p = toMap(e); zoomAt(Math.exp(-e.deltaY * 0.01), p[0], p[1]);
+      }, { passive: false });
+      var pts = {}, drag = null, pinch = null;
+      svg.addEventListener('pointerdown', function (e) {
+        pts[e.pointerId] = [e.clientX, e.clientY];
+        var ids = Object.keys(pts);
+        if (ids.length === 1 && W / view.w > 1.01) { drag = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y }; svg.setPointerCapture(e.pointerId); }
+        if (ids.length === 2) {
+          var a = pts[ids[0]], b = pts[ids[1]];
+          pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]), w: view.w }; drag = null;
+        }
+      });
+      svg.addEventListener('pointermove', function (e) {
+        if (!pts[e.pointerId]) { return; }
+        pts[e.pointerId] = [e.clientX, e.clientY];
+        var r = svg.getBoundingClientRect(), ids = Object.keys(pts);
+        if (pinch && ids.length === 2) {
+          var a = pts[ids[0]], b = pts[ids[1]], d = Math.hypot(a[0] - b[0], a[1] - b[1]);
+          var mid = toMap({ clientX: (a[0] + b[0]) / 2, clientY: (a[1] + b[1]) / 2 });
+          zoomAt(view.w / (pinch.w * pinch.d / d), mid[0], mid[1]);
+        } else if (drag) {
+          view.x = drag.vx - (e.clientX - drag.x) / r.width * view.w;
+          view.y = drag.vy - (e.clientY - drag.y) / r.height * view.h;
+          clamp(); apply();
+        }
+      });
+      function up(e) { delete pts[e.pointerId]; if (Object.keys(pts).length < 2) { pinch = null; } if (!Object.keys(pts).length) { drag = null; } }
+      svg.addEventListener('pointerup', up);
+      svg.addEventListener('pointercancel', up);
+      apply();
 
       /* coastlines: Natural Earth land at 1:110m from the world-atlas package, decoded with topojson-client */
       var sc = document.createElement('script');
