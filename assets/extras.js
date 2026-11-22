@@ -49,10 +49,13 @@
       var hp = P(home.lon, home.lat);
       var arcs = '', dots = '', labels = '';
       var LABEL = { 'Sydney': [-10, 30, 'end'], 'Thuwal': [10, 5, 'start'], 'Rio de Janeiro': [12, 14, 'start'], 'São Paulo': [-12, 18, 'end'],
-                    'Umeå': [10, 4, 'start'], 'Lisbon': [-10, 4, 'end'], 'Kiel': [10, -4, 'start'], 'Brisbane': [10, -6, 'start'] };
+                    'Umeå': [10, 4, 'start'], 'Lisbon': [-10, 4, 'end'], 'Kiel': [-10, -4, 'end'], 'Brisbane': [10, -6, 'start'],
+                    'Konstanz': [10, 12, 'start', 1], 'Kongens Lyngby': [10, -6, 'start', 1], 'Perpignan': [10, 12, 'start', 1] };
+      var XY = {};
       list.sort(function (a, b) { return b.papers - a.papers; });
       list.forEach(function (c, i) {
         var lon = wrapLon(c.lon), p = P(lon, c.lat), r = 3 + 2.2 * Math.sqrt(c.papers);
+        XY[c.city] = p;
         if (c !== home) {
           /* go the short way round: Papetoai is reached eastwards across the Pacific */
           var east = c.lon - home.lon < -180, tx = east ? P(c.lon + 360, c.lat)[0] : p[0], dx = tx - hp[0];
@@ -67,7 +70,7 @@
           '<circle class="dot" cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="' + r.toFixed(1) + '"/></g>';
         var L = LABEL[c.city];
         if (L) {
-          labels += '<text class="pin-label" data-p="' + p[0].toFixed(1) + ',' + p[1].toFixed(1) + ',' + L[0] + ',' + L[1] + '" style="--d:' + (c === home ? 0 : 500 + i * 140) + 'ms" x="' + (p[0] + L[0]).toFixed(1) + '" y="' + (p[1] + L[1]).toFixed(1) + '" text-anchor="' + L[2] + '">' + c.city + '</text>';
+          labels += '<text class="pin-label' + (L[3] ? ' minor' : '') + '" data-p="' + p[0].toFixed(1) + ',' + p[1].toFixed(1) + ',' + L[0] + ',' + L[1] + '" style="--d:' + (c === home ? 0 : 500 + i * 140) + 'ms" x="' + (p[0] + L[0]).toFixed(1) + '" y="' + (p[1] + L[1]).toFixed(1) + '" text-anchor="' + L[2] + '">' + c.city + '</text>';
         }
       });
       var grat = '';
@@ -78,7 +81,7 @@
         list.filter(function (c) { return c !== home; }).map(function (c) { return c.city; }).join(', ') + '">' +
         '<defs><clipPath id="mapclip"><rect width="' + W + '" height="' + H + '" rx="10"/></clipPath></defs><g clip-path="url(#mapclip)">' +
         '<rect width="' + W + '" height="' + H + '" class="sea"/><g class="land"></g><g class="grat">' + grat + '</g>' + arcs + dots + labels + '</g></svg>' +
-        '<figcaption>' + data.institutions.length + ' institutions in ' + n + ' cities besides Sydney. Point at a dot for the institutions, and use the buttons or double click to zoom. Source: OpenAlex affiliations for the papers with a DOI on the Publications page.</figcaption>';
+        '<figcaption>' + data.institutions.length + ' institutions in ' + n + ' cities besides Sydney. Point at a dot for the institutions. The map tours the regions until you zoom or drag it yourself. Source: OpenAlex affiliations for the papers with a DOI on the Publications page.</figcaption>';
       if (reduce) { fig.classList.add('in'); } else { onView(fig, function () { fig.classList.add('in'); }, 0.3); }
 
       /* zoom and pan: buttons, double click, trackpad pinch (ctrl + wheel), drag, and two finger pinch on touch screens.
@@ -154,6 +157,56 @@
       svg.addEventListener('pointerup', up);
       svg.addEventListener('pointercancel', up);
       apply();
+
+      /* the tour: zoom into one region, back out to the whole map, then the next region, a change every 5 s.
+         It stops for good as soon as the reader zooms or drags, and only runs while the map is on screen. */
+      var REGIONS = [['Lisbon', 'Perpignan'], ['Konstanz', 'Kiel', 'Kongens Lyngby', 'Umeå'], ['Thuwal'], ['Rio de Janeiro', 'São Paulo'], ['Sydney', 'Brisbane']];
+      function boxFor(names) {
+        var xs = [], ys = [];
+        names.forEach(function (nm) { if (XY[nm]) { xs.push(XY[nm][0]); ys.push(XY[nm][1]); } });
+        if (!xs.length) { return null; }
+        var x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs), y0 = Math.min.apply(null, ys), y1 = Math.max.apply(null, ys);
+        var w = Math.max((x1 - x0) * 1.9, (y1 - y0) * 1.9 * W / H, W / 7), h = w * H / W;
+        var b = { x: (x0 + x1) / 2 - w / 2, y: (y0 + y1) / 2 - h / 2, w: w, h: h };
+        b.x = Math.min(W - b.w, Math.max(0, b.x)); b.y = Math.min(H - b.h, Math.max(0, b.y));
+        return b;
+      }
+      var tourOn = !reduce, tourStep = 0, tourTimer = null, anim = null, onScreen = false;
+      function glide(to, ms) {
+        var from = { x: view.x, y: view.y, w: view.w, h: view.h }, t0 = performance.now();
+        if (anim) { cancelAnimationFrame(anim); }
+        function step(t) {
+          var f = Math.min(1, (t - t0) / ms), e = f < 0.5 ? 4 * f * f * f : 1 - Math.pow(-2 * f + 2, 3) / 2;
+          view = { x: from.x + (to.x - from.x) * e, y: from.y + (to.y - from.y) * e, w: from.w + (to.w - from.w) * e, h: from.h + (to.h - from.h) * e };
+          apply();
+          anim = f < 1 ? requestAnimationFrame(step) : null;
+        }
+        anim = requestAnimationFrame(step);
+      }
+      var WHOLE = { x: 0, y: 0, w: W, h: H };
+      function tick() {
+        tourTimer = null;
+        if (!tourOn || !onScreen) { return; }
+        var region = Math.floor(tourStep / 2) % REGIONS.length, inward = tourStep % 2 === 0;
+        glide(inward ? (boxFor(REGIONS[region]) || WHOLE) : WHOLE, 1400);
+        tourStep++;
+        tourTimer = setTimeout(tick, 5000);
+      }
+      function stopTour() {
+        if (!tourOn) { return; }
+        tourOn = false;
+        if (tourTimer) { clearTimeout(tourTimer); tourTimer = null; }
+        if (anim) { cancelAnimationFrame(anim); anim = null; }
+      }
+      ['pointerdown', 'dblclick', 'wheel'].forEach(function (ev) { svg.addEventListener(ev, stopTour, { capture: true, passive: true }); });
+      tools.addEventListener('click', stopTour, true);
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (es) {
+          onScreen = es[0].isIntersecting;
+          if (onScreen && tourOn && !tourTimer) { tourTimer = setTimeout(tick, tourStep ? 1200 : 3000); }
+          if (!onScreen && tourTimer) { clearTimeout(tourTimer); tourTimer = null; }
+        }, { threshold: 0.4 }).observe(fig);
+      }
 
       /* coastlines: Natural Earth land at 1:110m from the world-atlas package, decoded with topojson-client */
       var sc = document.createElement('script');
