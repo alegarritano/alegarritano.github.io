@@ -96,15 +96,31 @@
       var d3 = window.d3;
       var proj = d3.geoEquirectangular().translate([W / 2, H / 2]).precision(0.5), path = d3.geoPath(proj);
       var k = scaffold(fig, sh, 'Flat map linking Sydney to the cities where my co-authors are based', '',
-        '<rect class="sea" width="' + W + '" height="' + H + '" rx="12"/><path class="grat"/><path class="land"/><g class="routes"></g><g class="pins"></g>');
+        '<rect class="sea" width="' + W + '" height="' + H + '" rx="12"/><g id="flatworld"><path class="grat"/><path class="land"/><g class="routes"></g><g class="pins"></g></g>' +
+        '<g class="wcopy"></g><g class="wcopy"></g>');
+      /* the world repeats to the left and right, so a sideways drag never runs off the edge */
+      var copies = k.svg.querySelectorAll('.wcopy'), world = k.svg.querySelector('#flatworld'), needCopies = false;
       var gratP = k.svg.querySelector('.grat'), landP = k.svg.querySelector('.land');
       var st = { k: 1, c: [0, 0] };
+      function clampLat(c, kk) {
+        /* keep the poles at or beyond the top and bottom edges */
+        var half = (H / 2) / kk * 180 / Math.PI, lim = Math.max(0, 90 - half);
+        return [((c[0] + 540) % 360) - 180, Math.max(-lim, Math.min(lim, c[1]))];
+      }
       function render() {
+        st.c = clampLat(st.c, st.k);
         proj.scale(st.k).center(st.c);
+        var span = 2 * Math.PI * st.k;
+        copies[0].setAttribute('transform', 'translate(' + (-span).toFixed(1) + ',0)');
+        copies[1].setAttribute('transform', 'translate(' + span.toFixed(1) + ',0)');
+        needCopies = Math.abs(st.c[0]) + (W / 2) / st.k * 180 / Math.PI > 179;
         gratP.setAttribute('d', path(sh.grat));
         landP.setAttribute('d', path(sh.land));
         k.routes.forEach(function (r) { r[0].setAttribute('d', path(r[1]) || ''); });
         k.pins.forEach(function (p) { var xy = proj([p[1].lon, p[1].lat]); p[0].setAttribute('transform', 'translate(' + xy[0].toFixed(1) + ',' + xy[1].toFixed(1) + ')'); });
+        /* copies are plain duplicates of the drawn world, made only while an edge of the world is in view */
+        var html = needCopies ? world.innerHTML : '';
+        if (copies[0].innerHTML !== html) { copies[0].innerHTML = html; copies[1].innerHTML = html; }
         /* city names appear only once the map has zoomed in */
         fig.classList.toggle('zoomed', st.k > START.k * 1.6);
       }
@@ -143,7 +159,7 @@
       k.svg.addEventListener('pointermove', function (e) {
         if (!drag) { return; }
         var f = W / k.svg.getBoundingClientRect().width * 180 / Math.PI / st.k;
-        st = { k: st.k, c: [drag.c[0] - (e.clientX - drag.x) * f, Math.max(-60, Math.min(70, drag.c[1] + (e.clientY - drag.y) * f))] };
+        st = { k: st.k, c: [drag.c[0] - (e.clientX - drag.x) * f, drag.c[1] + (e.clientY - drag.y) * f] };
         render();
       });
       k.svg.addEventListener('pointerup', function () { drag = null; });
