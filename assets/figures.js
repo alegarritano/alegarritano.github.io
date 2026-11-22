@@ -1,4 +1,4 @@
-/* Animated overlays for the research illustrations (preview only).
+/* Animated overlays for the research illustrations and the home page theme previews.
    Each overlay is an SVG in the illustration's own pixel space (1448 x 1086), laid over the image.
    Animations use SMIL so a whole figure can be paused with svg.pauseAnimations(). */
 (function () {
@@ -251,7 +251,7 @@
     var box = { x: 0, y: CROP_Y, w: 1448, h: CROP_H };
     if (thumb) {
       if (key === 'theme-carbon-fixation') { box = { x: 225, y: 72, w: 1000, h: 735.3 }; }
-      key = { 'theme-soil': 'illustration_soil', 'theme-tools': 'illustration_tools', 'theme-symbiosis': 'illustration_symbiosis', 'theme-identity': 'illustration_identity', 'theme-hosts': 'hosts_microbiomes', 'theme-carbon-fixation': 'cfp_illustration' }[key];
+      key = { 'theme-soil': 'illustration_soil', 'theme-tools': 'illustration_tools', 'theme-symbiosis': 'illustration_symbiosis', 'theme-hosts': 'hosts_microbiomes', 'theme-carbon-fixation': 'cfp_illustration' }[key];
     }
     if (!key || !BUILD[key]) { return; }
     var wrap = document.createElement(thumb ? 'span' : 'div');
@@ -269,7 +269,7 @@
     svg.innerHTML = BUILD[key]();
     BOOST = 1;
     wrap.appendChild(svg);
-    var user = reduce ? 'paused' : 'auto', visible = false, btn = null;
+    var user = reduce ? 'paused' : 'auto', visible = false;
     function set(run) { if (run) { svg.unpauseAnimations(); } else { svg.pauseAnimations(); } }
     set(false);
     if ('IntersectionObserver' in window) {
