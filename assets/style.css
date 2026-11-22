@@ -309,3 +309,6 @@ nav.subnav { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 0.95rem; 
 @media (max-width: 480px) { .item { grid-template-columns: 1fr; gap: 10px; } .item .thumb { width: 136px; height: 100px; } }
 /* phones: the three row top bar scrolls away with the page instead of staying pinned */
 @media (max-width: 560px) { .topbar { position: static; } }
+
+/* the title's first line has built in leading above the letters; pull it up so the letters start level with the top of the thumbnail */
+.item h3 { margin-top: -0.3em; }
