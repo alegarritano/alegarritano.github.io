@@ -65,7 +65,7 @@
         c.names.push(i.name + ' (' + i.papers + (i.papers === 1 ? ' paper' : ' papers') + ')');
       });
       var list = Object.keys(cities).map(function (k) { return cities[k]; }).sort(function (a, b) { return b.papers - a.papers; });
-      return { cities: cities, list: list, home: cities['Sydney'], land: window.topojson.feature(topo, topo.objects.land), grat: window.d3.geoGraticule10() };
+      return { cities: cities, list: list, home: cities['Sydney'], land: window.topojson.feature(topo, topo.objects.land), grat: window.d3.geoGraticule().extent([[-180, -90], [180, 90.0001]]).step([10, 10])() };
     }
 
     /* shared drawing: routes from Sydney, dots with names and country codes */
@@ -150,20 +150,58 @@
       go(-1, 0);
       /* dragging pans the map and stops the tour for good */
       var api = { go: go, stop: function () { if (anim) { cancelAnimationFrame(anim); anim = null; } } }, drag = null;
+      /* zoom with no controls: trackpad or touch pinch, double click in, shift or alt double click out.
+         The point under the pointer stays put while the scale changes. */
+      var KMIN = START.k, KMAX = START.k * 14, pts = {}, pinch = null;
+      function user() { if (api.onUser) { api.onUser(); } api.stop(); }
+      function zoomAt(factor, clientX, clientY) {
+        var r = k.svg.getBoundingClientRect(), vx = (clientX - r.left) / r.width * W, vy = (clientY - r.top) / r.height * H;
+        var geo = proj.invert([vx, vy]), nk = Math.max(KMIN, Math.min(KMAX, st.k * factor)), d = 180 / Math.PI;
+        st = { k: nk, c: [geo[0] - (vx - W / 2) / nk * d, geo[1] + (vy - H / 2) / nk * d] };
+        render();
+      }
+      k.svg.addEventListener('wheel', function (e) {
+        if (!e.ctrlKey && !e.metaKey) { return; }
+        e.preventDefault(); user();
+        zoomAt(Math.exp(-e.deltaY * 0.01), e.clientX, e.clientY);
+      }, { passive: false });
+      k.svg.addEventListener('dblclick', function (e) {
+        e.preventDefault(); user();
+        zoomAt(e.shiftKey || e.altKey ? 1 / 1.8 : 1.8, e.clientX, e.clientY);
+      });
       k.svg.addEventListener('pointerdown', function (e) {
-        if (api.onUser) { api.onUser(); }
-        api.stop();
-        drag = { x: e.clientX, y: e.clientY, c: st.c.slice() };
+        user();
+        pts[e.pointerId] = [e.clientX, e.clientY];
+        var ids = Object.keys(pts);
+        if (ids.length === 2) {
+          var a = pts[ids[0]], b = pts[ids[1]];
+          pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]), k: st.k }; drag = null;
+        } else {
+          drag = { x: e.clientX, y: e.clientY, c: st.c.slice() };
+        }
         k.svg.setPointerCapture(e.pointerId);
       });
       k.svg.addEventListener('pointermove', function (e) {
+        if (!pts[e.pointerId]) { return; }
+        pts[e.pointerId] = [e.clientX, e.clientY];
+        var ids = Object.keys(pts);
+        if (pinch && ids.length === 2) {
+          var a = pts[ids[0]], b = pts[ids[1]], d = Math.hypot(a[0] - b[0], a[1] - b[1]);
+          zoomAt(pinch.k * d / pinch.d / st.k, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2);
+          return;
+        }
         if (!drag) { return; }
         var f = W / k.svg.getBoundingClientRect().width * 180 / Math.PI / st.k;
         st = { k: st.k, c: [drag.c[0] - (e.clientX - drag.x) * f, drag.c[1] + (e.clientY - drag.y) * f] };
         render();
       });
-      k.svg.addEventListener('pointerup', function () { drag = null; });
-      k.svg.addEventListener('pointercancel', function () { drag = null; });
+      function up(e) {
+        delete pts[e.pointerId];
+        if (Object.keys(pts).length < 2) { pinch = null; }
+        if (!Object.keys(pts).length) { drag = null; }
+      }
+      k.svg.addEventListener('pointerup', up);
+      k.svg.addEventListener('pointercancel', up);
       return api;
     }
 
