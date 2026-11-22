@@ -5,11 +5,14 @@
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var NS = 'http://www.w3.org/2000/svg';
 
+  /* BOOST is 1 for the full size figures and larger for the small home page previews, so the motion reads at 136 px */
+  var BOOST = 1;
   function rnd(a, b) { return a + Math.random() * (b - a); }
   function fixed(n) { return Math.round(n * 10) / 10; }
 
   /* a dot moving along a path, fading in and out */
   function mover(path, r, fill, dur, begin, glow) {
+    r = r * BOOST;
     return '<g opacity="0">' +
       (glow ? '<circle r="' + (r * 2.6) + '" fill="' + fill + '" opacity="0.28"/>' : '') +
       '<circle r="' + r + '" fill="' + fill + '"/>' +
@@ -20,7 +23,7 @@
   /* a soft ring that breathes around a point */
   function pulse(cx, cy, r, col, dur, begin, grow) {
     grow = grow || 1.35;
-    return '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + col + '" stroke-width="4" opacity="0">' +
+    return '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + col + '" stroke-width="' + (4 * BOOST) + '" opacity="0">' +
       '<animate attributeName="r" values="' + r + ';' + fixed(r * grow) + '" dur="' + dur + 's" begin="' + begin + 's" repeatCount="indefinite"/>' +
       '<animate attributeName="opacity" values="0;0.8;0" dur="' + dur + 's" begin="' + begin + 's" repeatCount="indefinite"/>' +
       '</circle>';
@@ -51,10 +54,10 @@
     var s = '';
     for (var i = 0; i < n; i++) {
       var b = -i * dur / n, dx = rnd(-30, 30);
-      s += '<circle cx="' + x + '" cy="' + y + '" r="10" fill="' + col + '" opacity="0">' +
+      s += '<circle cx="' + x + '" cy="' + y + '" r="' + (10 * BOOST) + '" fill="' + col + '" opacity="0">' +
         '<animate attributeName="cy" values="' + y + ';' + (y - rise) + '" dur="' + dur + 's" begin="' + fixed(b) + 's" repeatCount="indefinite"/>' +
         '<animate attributeName="cx" values="' + x + ';' + fixed(x + dx) + '" dur="' + dur + 's" begin="' + fixed(b) + 's" repeatCount="indefinite"/>' +
-        '<animate attributeName="r" values="8;22" dur="' + dur + 's" begin="' + fixed(b) + 's" repeatCount="indefinite"/>' +
+        '<animate attributeName="r" values="' + (8 * BOOST) + ';' + (22 * BOOST) + '" dur="' + dur + 's" begin="' + fixed(b) + 's" repeatCount="indefinite"/>' +
         '<animate attributeName="opacity" values="0;0.75;0" dur="' + dur + 's" begin="' + fixed(b) + 's" repeatCount="indefinite"/>' +
         '</circle>';
     }
@@ -72,11 +75,12 @@
       : '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + (o.rx + 6) + '" ry="' + (o.ry + 6) + '" transform="rotate(' + rot + ' ' + cx + ' ' + cy + ')" fill="' + o.cover + '" filter="url(#soft)"/>') : '';
     var dur = o.dur || rnd(1.6, 2.6), b = fixed(-rnd(0, dur)), anim;
     if (o.spin) {
-      anim = '<animateTransform attributeName="transform" type="rotate" from="0 ' + cx + ' ' + cy + '" to="' + (o.spin > 0 ? 360 : -360) + ' ' + cx + ' ' + cy + '" dur="' + Math.abs(o.spin) + 's" repeatCount="indefinite"/>';
+      anim = '<animateTransform attributeName="transform" type="rotate" from="0 ' + cx + ' ' + cy + '" to="' + (o.spin > 0 ? 360 : -360) + ' ' + cx + ' ' + cy + '" dur="' + fixed(Math.abs(o.spin) / BOOST) + 's" repeatCount="indefinite"/>';
     } else if (o.bob) {
-      anim = '<animateTransform attributeName="transform" type="translate" values="0 0;' + fixed(o.bob / 3) + ' ' + (-o.bob) + ';0 0" dur="' + dur + 's" begin="' + b + 's" repeatCount="indefinite"/>';
+      var bb = o.bob * BOOST;
+      anim = '<animateTransform attributeName="transform" type="translate" values="0 0;' + fixed(bb / 3) + ' ' + fixed(-bb) + ';0 0" dur="' + dur + 's" begin="' + b + 's" repeatCount="indefinite"/>';
     } else {
-      var a = o.angle || 7;
+      var a = fixed((o.angle || 7) * Math.min(BOOST, 2));
       anim = '<animateTransform attributeName="transform" type="rotate" values="' + (-a) + ' ' + cx + ' ' + cy + ';' + a + ' ' + cx + ' ' + cy + ';' + (-a) + ' ' + cx + ' ' + cy + '" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="' + dur + 's" begin="' + b + 's" repeatCount="indefinite"/>';
     }
     return cover + '<clipPath id="' + id + '">' + shape + '</clipPath>' +
@@ -261,7 +265,9 @@
     svg.setAttribute('focusable', 'false');
     SRC = img.currentSrc || img.src;
     IMGBOX = thumb ? 'x="' + box.x + '" y="' + fixed(box.y) + '" width="' + box.w + '" height="' + fixed(box.h) + '"' : 'width="1448" height="1086"';
+    BOOST = thumb ? 2.4 : 1;
     svg.innerHTML = BUILD[key]();
+    BOOST = 1;
     wrap.appendChild(svg);
     var user = reduce ? 'paused' : 'auto', visible = false, btn = null;
     function set(run) { if (run) { svg.unpauseAnimations(); } else { svg.pauseAnimations(); } }
