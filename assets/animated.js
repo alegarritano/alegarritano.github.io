@@ -99,7 +99,7 @@
   document.body.classList.add('depth');
   /* depth in metres for each section, as a scale for the story, not sampling depths */
   var stops = [
-    ['soil', 0], ['tools', 0], ['phd', 150], ['symbiosis', 1000], ['identity', 1000],
+    ['soil', 0], ['tools', 220], ['phd', 930], ['symbiosis', 1000], ['identity', 1000],
     ['hosts', 1000], ['carbon-fixation', 1000], ['masters', 1000]
   ].map(function (s) { return { el: document.getElementById(s[0]), d: s[1] }; }).filter(function (s) { return s.el; });
 

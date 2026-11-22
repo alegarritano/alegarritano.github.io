@@ -99,7 +99,7 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.4em 0; }
 }
 .content { min-width: 0; }
 .content .page-title { font-size: 2.2rem; margin-top: 0; }
-.content p, .content .pub .summary, .content .item .summary { text-align: start; hyphens: manual; }
+.content p, .content .pub .summary, .content .item .summary { text-align: justify; hyphens: auto; }
 .content .meta, .content .subnav, .content .lede { text-align: left; hyphens: manual; }
 
 /* page body */
@@ -126,7 +126,7 @@ nav.subnav { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 0.95rem; 
 .item { display: grid; grid-template-columns: 136px 1fr; gap: 20px; align-items: start; padding: 16px 0; border-bottom: 1px solid var(--rule); }
 .item:first-child { border-top: 1px solid var(--rule); }
 .thumb { width: 136px; height: 100px; object-fit: cover; border-radius: 6px; background: var(--bg-2); display: block; border: 1px solid var(--rule); }
-.item h3 { margin: 0 0 0.25em; font-size: 1.05rem; line-height: 1.35; text-align: start; hyphens: manual; }
+.item h3 { margin: 0 0 0.25em; font-size: 1.05rem; line-height: 1.35; text-align: justify; hyphens: auto; }
 .item h3 a { text-decoration: none; }
 .item h3 a:hover { text-decoration: underline; }
 .item .authors { display: block; color: var(--ink-2); font-size: 0.95rem; }
@@ -276,7 +276,7 @@ nav.subnav { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 0.95rem; 
 .tool p { margin: 0 0 0.7em; }
 .tool .links { margin-top: auto; padding-top: 0.2em; margin-bottom: 0; }
 .tools { gap: 16px; align-items: stretch; }
-.content .tool p { text-align: start; hyphens: manual; }
+.content .tool p { text-align: justify; hyphens: auto; }
 .content .tool .venue, .content .tool .links { text-align: left; }
 .content h3.year { font-size: 1.02rem; font-weight: 700; color: var(--ink-2); margin: 1.6rem 0 0; padding-bottom: 4px; border-bottom: 1px solid var(--rule); }
 .content h2 + h3.year { margin-top: 0.9rem; }
@@ -295,7 +295,6 @@ nav.subnav { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 0.95rem; 
 @media (max-width: 560px) { .strip { aspect-ratio: 900 / 150; max-height: none; background-image: url('img/banner_mobile.webp'); } }
 
 /* phones: body copy is left aligned, full justification leaves wide gaps in narrow columns */
-@media (max-width: 560px) { .content p, .content .pub .summary, .content .item .summary, .content .tool p { hyphens: auto; } }
 
 /* citation and attention badges, on the same line as the DOI and Summary links */
 .item .links { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }

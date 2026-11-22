@@ -144,7 +144,14 @@
       function next() {
         timer = null;
         if (!on || !visible) { return; }
-        view.go(i % REGIONS.length, 1600);
+        if (i === REGIONS.length) {
+          /* after the last region, back out to the whole world and rest for 7 s before the next round */
+          view.go(-1, 1600);
+          i = 0;
+          timer = setTimeout(next, 1600 + 7000);
+          return;
+        }
+        view.go(i, 1600);
         i++;
         timer = setTimeout(next, 1600 + 2000);
       }
