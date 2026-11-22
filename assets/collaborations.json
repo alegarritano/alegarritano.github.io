@@ -14,9 +14,9 @@
    "name": "King Abdullah University of Science and Technology",
    "country": "SA",
    "papers": 9,
-   "city": "Jeddah",
-   "lat": 21.49012,
-   "lon": 39.18624
+   "city": "Thuwal",
+   "lat": 22.3095,
+   "lon": 39.1042
   },
   {
    "name": "Universidade Federal do Rio de Janeiro",
@@ -134,9 +134,9 @@
    "name": "Centre de Recherches Insulaires et Observatoire de l'Environnement",
    "country": "PF",
    "papers": 1,
-   "city": "Papetoai",
-   "lat": -17.49538,
-   "lon": -149.87437
+   "city": "Perpignan",
+   "lat": 42.69764,
+   "lon": 2.89541
   },
   {
    "name": "GEOMAR Helmholtz Centre for Ocean Research Kiel",

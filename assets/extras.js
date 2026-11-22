@@ -1,4 +1,4 @@
-/* Animated preview extras: figure reveal, the Networks map and the citations chart. */
+/* Animated extras: figure reveal and the Networks co-author map. */
 (function () {
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var NS = 'http://www.w3.org/2000/svg';
@@ -24,32 +24,7 @@
     });
   }
 
-  /* ---------- citations per year on Publications ---------- */
   var page = document.body.dataset.page;
-  if (page === 'publications') {
-    fetch('assets/citations.json').then(function (r) { return r.json(); }).then(function (d) {
-      var nav = document.querySelector('nav.subnav');
-      if (!nav) { return; }
-      var fig = document.createElement('figure');
-      fig.className = 'cites';
-      var max = Math.max.apply(null, d.by_year.map(function (y) { return y.count; }));
-      var W = 640, H = 190, pad = 26, bw = (W - 2 * pad) / d.by_year.length;
-      var bars = d.by_year.map(function (y, i) {
-        var h = Math.round((H - 58) * y.count / max), x = pad + i * bw + bw * 0.18, w = bw * 0.64, top = H - 30 - h;
-        var last = i === d.by_year.length - 1;
-        return '<g class="bar" style="--d:' + (i * 70) + 'ms">' +
-          '<rect x="' + x.toFixed(1) + '" y="' + top + '" width="' + w.toFixed(1) + '" height="' + h + '" rx="3" fill="' + (last ? 'var(--accent-tint)' : 'var(--accent)') + '"' + (last ? ' stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4 3"' : '') + '/>' +
-          '<text x="' + (x + w / 2).toFixed(1) + '" y="' + (top - 6) + '" text-anchor="middle" class="v">' + y.count + '</text>' +
-          '<text x="' + (x + w / 2).toFixed(1) + '" y="' + (H - 10) + '" text-anchor="middle" class="y">' + (last ? y.year + '*' : y.year) + '</text></g>';
-      }).join('');
-      fig.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Citations per year to the papers on this page, ' +
-        d.by_year.map(function (y) { return y.year + ': ' + y.count; }).join(', ') + '">' +
-        '<line x1="' + pad + '" x2="' + (W - pad) + '" y1="' + (H - 30) + '" y2="' + (H - 30) + '" stroke="var(--rule)"/>' + bars + '</svg>' +
-        '<figcaption>Citations per year to the papers on this page, ' + d.total + ' in total. Source: OpenAlex. *2026 to date. Counts differ a little from the Dimensions badges.</figcaption>';
-      nav.parentNode.insertBefore(fig, nav.nextSibling);
-      if (reduce) { fig.classList.add('in'); } else { onView(fig, function () { fig.classList.add('in'); }, 0.4); }
-    });
-  }
 
   /* ---------- Networks: where co-authors on the published papers are based ---------- */
   if (page === 'networks') {
@@ -63,11 +38,10 @@
       var k = W / (LON1 - LON0), H = Math.round((LAT0 - LAT1) * k);
       function wrapLon(lon) { return lon < LON0 ? lon + 360 : lon > LON1 ? lon - 360 : lon; }
       function P(lon, lat) { return [(lon - LON0) * k, (LAT0 - lat) * k]; }
-      var CITY_FIX = { 'King Abdullah University of Science and Technology': 'Thuwal' };
       var cities = {};
       data.institutions.forEach(function (i) {
         if (i.lat == null) { return; }
-        var city = CITY_FIX[i.name] || i.city;
+        var city = i.city;
         var c = cities[city] || (cities[city] = { city: city, lat: i.lat, lon: i.lon, papers: 0, names: [] });
         c.papers = Math.max(c.papers, i.papers);
         c.names.push(i.name + ' (' + i.papers + (i.papers === 1 ? ' paper' : ' papers') + ')');
@@ -77,7 +51,7 @@
       var hp = P(home.lon, home.lat);
       var arcs = '', dots = '', labels = '';
       var LABEL = { 'Sydney': [-10, 30, 'end'], 'Thuwal': [10, 5, 'start'], 'Rio de Janeiro': [12, 14, 'start'], 'São Paulo': [-12, 18, 'end'],
-                    'Umeå': [10, 4, 'start'], 'Lisbon': [-10, 4, 'end'], 'Kiel': [10, -4, 'start'], 'Brisbane': [10, -6, 'start'], 'Papetoai': [10, 4, 'start'] };
+                    'Umeå': [10, 4, 'start'], 'Lisbon': [-10, 4, 'end'], 'Kiel': [10, -4, 'start'], 'Brisbane': [10, -6, 'start'] };
       list.sort(function (a, b) { return b.papers - a.papers; });
       list.forEach(function (c, i) {
         var lon = wrapLon(c.lon), p = P(lon, c.lat), r = 3 + 2.2 * Math.sqrt(c.papers);
@@ -95,7 +69,7 @@
           '<circle class="dot" cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="' + r.toFixed(1) + '"/></g>';
         var L = LABEL[c.city];
         if (L) {
-          labels += '<text class="pin-label" style="--d:' + (c === home ? 0 : 500 + i * 140) + 'ms" x="' + (p[0] + L[0]).toFixed(1) + '" y="' + (p[1] + L[1]).toFixed(1) + '" text-anchor="' + L[2] + '">' + (c.city === 'Papetoai' ? 'Moorea' : c.city) + '</text>';
+          labels += '<text class="pin-label" style="--d:' + (c === home ? 0 : 500 + i * 140) + 'ms" x="' + (p[0] + L[0]).toFixed(1) + '" y="' + (p[1] + L[1]).toFixed(1) + '" text-anchor="' + L[2] + '">' + c.city + '</text>';
         }
       });
       var grat = '';
