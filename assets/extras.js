@@ -49,7 +49,7 @@
       })
       .catch(function () {});
 
-    var S = 600, W = 960, H = 380, NSs = 'http://www.w3.org/2000/svg';
+    var S = 600, W = 960, H = 420, NSs = 'http://www.w3.org/2000/svg';
     var REGIONS = [['Lisbon', 'Perpignan'], ['Konstanz', 'Kiel', 'Kongens Lyngby', 'Umeå'], ['Thuwal'], ['Rio de Janeiro', 'São Paulo'], ['Sydney', 'Brisbane']];
     var LEFT = { 'São Paulo': 1, 'Kiel': 1 };
     /* names that crowd their neighbours on the whole world view appear only once the map zooms in */
@@ -133,8 +133,8 @@
         REGIONS[i].forEach(function (n) { var c = sh.cities[n]; if (c) { pts.push([c.lon - 5, c.lat - 4], [c.lon + 5, c.lat + 4]); } });
         return fitTo({ type: 'MultiPoint', coordinates: pts }, 50, 170);
       }
-      /* the whole world, cut to 80 N and 60 S */
-      var START = { k: W / (2 * Math.PI), c: [10, 10] };
+      /* the whole world from about 74 N to 84 S, so the Sydney to Brazil routes, which pass near 77 S, stay in view */
+      var START = { k: W / (2 * Math.PI), c: [10, -5] };
       var anim = null;
       function go(i, ms) {
         var a = { k: st.k, c: st.c.slice() }, b = i < 0 ? START : region(i), t0 = performance.now();
