@@ -86,10 +86,6 @@
       /* zoom and pan: buttons, double click, trackpad pinch (ctrl + wheel), drag, and two finger pinch on touch screens.
          Dots, rings and labels keep their size on screen while the map grows. */
       var svg = fig.querySelector('svg'), view = { x: 0, y: 0, w: W, h: H }, MAXZ = 8;
-      var tools = document.createElement('div');
-      tools.className = 'map-tools';
-      tools.innerHTML = '<button type="button" data-z="in" aria-label="Zoom in">+</button><button type="button" data-z="out" aria-label="Zoom out">−</button><button type="button" data-z="reset" aria-label="Show the whole map">⟲</button>';
-      fig.appendChild(tools);
       var base = [];
       svg.querySelectorAll('.pin circle').forEach(function (c) { base.push([c, +c.getAttribute('r')]); });
       var labels0 = [];
@@ -116,12 +112,6 @@
         var r = svg.getBoundingClientRect();
         return [view.x + (ev.clientX - r.left) / r.width * view.w, view.y + (ev.clientY - r.top) / r.height * view.h];
       }
-      tools.addEventListener('click', function (e) {
-        var z = e.target.getAttribute('data-z');
-        if (z === 'in') { zoomAt(1.6, view.x + view.w / 2, view.y + view.h / 2); }
-        if (z === 'out') { zoomAt(1 / 1.6, view.x + view.w / 2, view.y + view.h / 2); }
-        if (z === 'reset') { view = { x: 0, y: 0, w: W, h: H }; apply(); }
-      });
       svg.addEventListener('dblclick', function (e) { var p = toMap(e); zoomAt(e.shiftKey ? 1 / 1.8 : 1.8, p[0], p[1]); });
       svg.addEventListener('wheel', function (e) {
         if (!e.ctrlKey) { return; }
@@ -172,7 +162,7 @@
       }
       var chip = document.createElement('div');
       chip.className = 'map-chip'; chip.setAttribute('aria-hidden', 'true');
-      fig.insertBefore(chip, tools);
+      fig.appendChild(chip);
       var tourOn = !reduce, tourStep = 0, tourTimer = null, anim = null, onScreen = false;
       function glide(to, ms) {
         var from = { x: view.x, y: view.y, w: view.w, h: view.h }, t0 = performance.now();
@@ -207,7 +197,6 @@
         chip.classList.remove('show');
       }
       ['pointerdown', 'dblclick', 'wheel'].forEach(function (ev) { svg.addEventListener(ev, stopTour, { capture: true, passive: true }); });
-      tools.addEventListener('click', stopTour, true);
       if ('IntersectionObserver' in window) {
         new IntersectionObserver(function (es) {
           onScreen = es[0].isIntersecting;
