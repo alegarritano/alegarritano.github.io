@@ -11,7 +11,7 @@
 <meta property="og:description" content="Research of Alessandro Garritano by career stage. Current work on soil carbon and phosphorus storage and on sequencing pipelines, a PhD on how deep sea sponges feed in the dark, and a master&#x27;s on biohydrogen from palm oil waste.">
 <meta property="og:url" content="https://www.alessandrogarritano.com/research.html">
 <meta property="og:image" content="https://www.alessandrogarritano.com/assets/img/portrait.jpg">
-<link rel="stylesheet" href="assets/style.css?v=202611220917">
+<link rel="stylesheet" href="assets/style.css?v=202611221435">
 <link rel="icon" href="favicon.ico" sizes="48x48">
 <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png" sizes="192x192" type="image/png">
@@ -37,7 +37,8 @@
 <script>
 (function () {
   var bar = document.querySelector('.topbar'), root = document.documentElement;
-  function set() { root.style.setProperty('--topbar-h', bar.offsetHeight + 'px'); }
+  function h() { return getComputedStyle(bar).position === 'sticky' ? bar.offsetHeight : 0; }
+  function set() { root.style.setProperty('--topbar-h', h() + 'px'); }
   set();
   if (window.ResizeObserver) { new ResizeObserver(set).observe(bar); } else { window.addEventListener('resize', set); }
   window.addEventListener('load', function () {
@@ -45,8 +46,8 @@
     if (location.hash.length < 2) { return; }
     var t = document.getElementById(decodeURIComponent(location.hash.slice(1)));
     if (!t) { return; }
-    var top = t.getBoundingClientRect().top, h = bar.offsetHeight;
-    if (top < h || top > h + 60) { t.scrollIntoView(); }
+    var top = t.getBoundingClientRect().top, b = h();
+    if (top < b || top > b + 60) { t.scrollIntoView(); }
   });
 })();
 </script>
@@ -79,7 +80,7 @@
   </div>
 </aside>
 <div class="content">
-<h2 class="page-title" id="content" tabindex="-1">Research</h2>
+<h1 class="page-title" id="content" tabindex="-1">Research</h1>
 <p class="intro">Life runs on a small set of elements, and none of them stays in living matter for long. Carbon, nitrogen and phosphorus pass from rock, air and water into cells and back out again, and microbes carry out most of the steps in between. I study those steps in soils and in the microbiomes of marine hosts, asking how microbes obtain the elements and what their metabolism means for the host and the ecosystem around them.</p>
 
 

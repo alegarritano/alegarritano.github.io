@@ -6,7 +6,7 @@
 <title>Page not found | Alessandro N. Garritano</title>
 <meta name="description" content="">
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/style.css?v=202611220917">
+<link rel="stylesheet" href="/assets/style.css?v=202611221435">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="/assets/favicon-192.png" sizes="192x192" type="image/png">
@@ -32,7 +32,8 @@
 <script>
 (function () {
   var bar = document.querySelector('.topbar'), root = document.documentElement;
-  function set() { root.style.setProperty('--topbar-h', bar.offsetHeight + 'px'); }
+  function h() { return getComputedStyle(bar).position === 'sticky' ? bar.offsetHeight : 0; }
+  function set() { root.style.setProperty('--topbar-h', h() + 'px'); }
   set();
   if (window.ResizeObserver) { new ResizeObserver(set).observe(bar); } else { window.addEventListener('resize', set); }
   window.addEventListener('load', function () {
@@ -40,8 +41,8 @@
     if (location.hash.length < 2) { return; }
     var t = document.getElementById(decodeURIComponent(location.hash.slice(1)));
     if (!t) { return; }
-    var top = t.getBoundingClientRect().top, h = bar.offsetHeight;
-    if (top < h || top > h + 60) { t.scrollIntoView(); }
+    var top = t.getBoundingClientRect().top, b = h();
+    if (top < b || top > b + 60) { t.scrollIntoView(); }
   });
 })();
 </script>
@@ -75,7 +76,7 @@
 </aside>
 <div class="content">
 <div class="wrap prose">
-  <h2 class="page-title" id="content" tabindex="-1">That page is not here</h2>
+  <h1 class="page-title" id="content" tabindex="-1">That page is not here</h1>
   <p>The address may have changed when the site was rebuilt in November 2026. The old pages were Home, Research, Publications and About me. Everything from them now lives in the pages linked above.</p>
   <p><a class="btn" href="/">Back to the home page</a></p>
 </div>
