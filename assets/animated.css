@@ -86,3 +86,5 @@ figure.netglobe.in .pin { opacity: 1; }
 figure.netglobe .pin-label { font: 600 17px var(--sans); fill: var(--ink-2); paint-order: stroke; stroke: rgba(244,249,250,0.95); stroke-width: 4px; }
 @media (prefers-reduced-motion: reduce) { figure.netglobe .route { stroke-dashoffset: 0; } figure.netglobe.in .ring { animation: none; } figure.netglobe .pin { transition: none; } }
 figure.netglobe .pin-label .cc { font-weight: 500; fill: var(--muted); }
+figure.netflat .pin-label { opacity: 0; transition: opacity 0.4s; }
+figure.netflat.zoomed .pin-label { opacity: 1; }

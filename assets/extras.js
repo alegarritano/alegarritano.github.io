@@ -26,10 +26,10 @@
 
   var page = document.body.dataset.page;
 
-  /* ---------- Networks: the cities of my co-authors, on a globe and on a flat map ---------- */
+  /* ---------- Networks: a map linking Sydney to the cities of my co-authors ---------- */
   if (page === 'networks') {
-    var figG = document.getElementById('collab-map'), figF = document.getElementById('collab-flat');
-    if (!figG && !figF) { return; }
+    var figF = document.getElementById('collab-flat');
+    if (!figF) { return; }
     function load(src) {
       return new Promise(function (ok, bad) { var sc = document.createElement('script'); sc.src = src; sc.onload = ok; sc.onerror = bad; document.head.appendChild(sc); });
     }
@@ -45,8 +45,7 @@
       })
       .then(function (res) {
         var shared = prepare(res[0], res[1]);
-        if (figG) { tour(figG, globe(figG, shared)); }
-        if (figF) { tour(figF, flat(figF, shared)); }
+        tour(figF, flat(figF, shared));
       })
       .catch(function () {});
 
@@ -91,70 +90,6 @@
       return { svg: svg, routes: routes, pins: pins };
     }
 
-    function globe(fig, sh) {
-      var d3 = window.d3, R = 282;
-      var proj = d3.geoOrthographic().translate([S / 2, S / 2]).clipAngle(90).precision(0.5), path = d3.geoPath(proj);
-      var k = scaffold(fig, sh, 'Globe linking Sydney to the cities where my co-authors are based',
-        '<radialGradient id="ocean" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#f4f9fa"/><stop offset="1" stop-color="#cfe1e6"/></radialGradient>' +
-        '<radialGradient id="shade" cx="50%" cy="50%" r="50%"><stop offset="0.75" stop-color="#0b2f3a" stop-opacity="0"/><stop offset="1" stop-color="#0b2f3a" stop-opacity="0.18"/></radialGradient>' +
-        '<clipPath id="disc"><circle cx="' + S / 2 + '" cy="' + S / 2 + '" r="' + R + '"/></clipPath>',
-        '<g clip-path="url(#disc)"><path class="sphere" fill="url(#ocean)"/><path class="grat"/><path class="land"/><g class="routes"></g><g class="pins"></g></g><circle class="rim" cx="' + S / 2 + '" cy="' + S / 2 + '" r="' + R + '"/>');
-      var sphereP = k.svg.querySelector('.sphere'), gratP = k.svg.querySelector('.grat'), landP = k.svg.querySelector('.land');
-      var st = { rot: [0, 0], z: 1 };
-      function render() {
-        proj.rotate(st.rot).scale(R * st.z);
-        var centre = [-st.rot[0], -st.rot[1]], lim = Math.min(Math.PI / 2 - 0.05, Math.asin(Math.min(1, 1 / st.z)) - 0.02);
-        sphereP.setAttribute('d', path({ type: 'Sphere' }));
-        gratP.setAttribute('d', path(sh.grat));
-        landP.setAttribute('d', path(sh.land));
-        k.routes.forEach(function (r) { r[0].setAttribute('d', path(r[1]) || ''); });
-        k.pins.forEach(function (p) {
-          var c = p[1], vis = d3.geoDistance([c.lon, c.lat], centre) < lim;
-          p[0].style.display = vis ? '' : 'none';
-          if (vis) { var xy = proj([c.lon, c.lat]); p[0].setAttribute('transform', 'translate(' + xy[0].toFixed(1) + ',' + xy[1].toFixed(1) + ')'); }
-        });
-      }
-      function centreOf(names) {
-        var pts = names.map(function (n) { return sh.cities[n]; }).filter(Boolean);
-        return [-d3.mean(pts, function (c) { return c.lon; }), -Math.max(-60, Math.min(60, d3.mean(pts, function (c) { return c.lat; }))) * 0.8];
-      }
-      var ZOOM = [2.6, 2.2, 1.7, 2.4, 2.4];
-      var START = { rot: centreOf(['Lisbon', 'Thuwal']), z: 1 };
-      function target(i) { return i < 0 ? START : { rot: centreOf(REGIONS[i]), z: ZOOM[i] }; }
-      var anim = null;
-      function go(i, ms) {
-        var a = { rot: st.rot.slice(), z: st.z }, b = target(i), dl = ((b.rot[0] - a.rot[0] + 540) % 360) - 180, t0 = performance.now();
-        if (anim) { cancelAnimationFrame(anim); }
-        if (!ms) { st = { rot: b.rot.slice(), z: b.z }; render(); return; }
-        (function frame(t) {
-          var e = ease(Math.min(1, (t - t0) / ms));
-          var dip = Math.abs(dl) > 40 ? Math.sin(Math.PI * e) * (Math.min(a.z, b.z) - 1) : 0;
-          st = { rot: [a.rot[0] + dl * e, a.rot[1] + (b.rot[1] - a.rot[1]) * e], z: a.z + (b.z - a.z) * e - dip };
-          render();
-          anim = e < 1 ? requestAnimationFrame(frame) : null;
-        })(t0);
-      }
-      go(-1, 0);
-      /* dragging spins the globe by hand */
-      var drag = null, api = { go: go, stop: function () { if (anim) { cancelAnimationFrame(anim); anim = null; } } };
-      k.svg.addEventListener('pointerdown', function (e) {
-        if (api.onUser) { api.onUser(); }
-        api.stop();
-        drag = { x: e.clientX, y: e.clientY, r: st.rot.slice() };
-        if (st.z !== 1) { st.z = 1; render(); }
-        k.svg.setPointerCapture(e.pointerId);
-      });
-      k.svg.addEventListener('pointermove', function (e) {
-        if (!drag) { return; }
-        var f = 180 / k.svg.getBoundingClientRect().width;
-        st.rot = [drag.r[0] + (e.clientX - drag.x) * f, Math.max(-75, Math.min(75, drag.r[1] - (e.clientY - drag.y) * f))];
-        render();
-      });
-      k.svg.addEventListener('pointerup', function () { drag = null; });
-      k.svg.addEventListener('pointercancel', function () { drag = null; });
-      return api;
-    }
-
     function flat(fig, sh) {
       var d3 = window.d3;
       var proj = d3.geoEquirectangular().translate([S / 2, S / 2]).precision(0.5), path = d3.geoPath(proj);
@@ -168,15 +103,17 @@
         landP.setAttribute('d', path(sh.land));
         k.routes.forEach(function (r) { r[0].setAttribute('d', path(r[1]) || ''); });
         k.pins.forEach(function (p) { var xy = proj([p[1].lon, p[1].lat]); p[0].setAttribute('transform', 'translate(' + xy[0].toFixed(1) + ',' + xy[1].toFixed(1) + ')'); });
+        /* city names appear only once the map has zoomed in */
+        fig.classList.toggle('zoomed', st.k > START.k * 1.6);
       }
-      function fitTo(obj, pad) {
-        var t = d3.geoEquirectangular().fitExtent([[pad, pad], [S - pad, S - pad]], obj);
+      function fitTo(obj, pad, right) {
+        var t = d3.geoEquirectangular().fitExtent([[pad, pad], [S - (right || pad), S - pad]], obj);
         return { k: t.scale(), c: t.invert([S / 2, S / 2]) };
       }
       function region(i) {
         var pts = [];
         REGIONS[i].forEach(function (n) { var c = sh.cities[n]; if (c) { pts.push([c.lon - 5, c.lat - 4], [c.lon + 5, c.lat + 4]); } });
-        return fitTo({ type: 'MultiPoint', coordinates: pts }, 70);
+        return fitTo({ type: 'MultiPoint', coordinates: pts }, 70, 150);
       }
       var START = fitTo({ type: 'Sphere' }, 6);
       var anim = null;
