@@ -90,3 +90,6 @@ figure.netflat.wide svg { aspect-ratio: auto; }
 .netcards { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
 figure.netflat svg { cursor: grab; touch-action: pan-y; }
 figure.netflat svg:active { cursor: grabbing; }
+/* Networks: the map section sits close under the bold opening line */
+#coauthors { margin-top: 0.8rem; }
+#coauthors h2 { margin-top: 0; margin-bottom: 0.5rem; }
