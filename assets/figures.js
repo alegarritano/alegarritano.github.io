@@ -85,36 +85,6 @@
   var DEFS = '<defs><filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter></defs>';
 
 
-  /* a microbe swimming a smooth closed loop through a set of points; rods face the way they swim and wiggle */
-  function loopPath(pts) {
-    var n = pts.length, d = 'M' + pts[0][0] + ',' + pts[0][1];
-    for (var i = 0; i < n; i++) {
-      var p0 = pts[(i - 1 + n) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
-      d += ' C' + fixed(p1[0] + (p2[0] - p0[0]) / 6) + ',' + fixed(p1[1] + (p2[1] - p0[1]) / 6) + ' ' +
-        fixed(p2[0] - (p3[0] - p1[0]) / 6) + ',' + fixed(p2[1] - (p3[1] - p1[1]) / 6) + ' ' + p2[0] + ',' + p2[1];
-    }
-    return d;
-  }
-  function swimmer(kind, col, box, dur, scale) {
-    var pts = [];
-    var cx = rnd(box[0], box[2]), cy = rnd(box[1], box[3]), spanX = (box[2] - box[0]) / 2, spanY = (box[3] - box[1]) / 2;
-    for (var i = 0; i < 5; i++) {
-      var a = i / 5 * Math.PI * 2 + rnd(-0.5, 0.5), rr = rnd(0.45, 1);
-      pts.push([Math.round(Math.min(box[2], Math.max(box[0], cx + Math.cos(a) * spanX * rr))), Math.round(Math.min(box[3], Math.max(box[1], cy + Math.sin(a) * spanY * rr)))]);
-    }
-    if (Math.random() < 0.5) { pts.reverse(); }
-    var body = kind === 'rod'
-      ? '<rect x="-19" y="-7" width="38" height="14" rx="7" fill="' + col + '" stroke="#0d1118" stroke-width="3"/>'
-      : kind === 'vibrio'
-        ? '<path d="M-18,4 Q-6,-10 6,-4 T18,-6" fill="none" stroke="#0d1118" stroke-width="12" stroke-linecap="round"/><path d="M-18,4 Q-6,-10 6,-4 T18,-6" fill="none" stroke="' + col + '" stroke-width="6.5" stroke-linecap="round"/>'
-        : '<circle r="8.5" fill="' + col + '" stroke="#0d1118" stroke-width="3"/>';
-    var tail = kind === 'coccus' ? '' : '<path d="M-19,0 q-9,-6 -18,0 t-18,0" fill="none" stroke="' + col + '" stroke-width="2.5" stroke-linecap="round" opacity="0.8">' +
-      '<animate attributeName="d" values="M-19,0 q-9,-6 -18,0 t-18,0;M-19,0 q-9,6 -18,0 t-18,0;M-19,0 q-9,-6 -18,0 t-18,0" dur="0.5s" repeatCount="indefinite"/></path>';
-    var wig = kind === 'coccus' ? '' : '<animateTransform attributeName="transform" type="rotate" values="-9;9;-9" dur="' + fixed(rnd(0.7, 1.1)) + 's" repeatCount="indefinite" additive="sum"/>';
-    return '<g><animateMotion dur="' + fixed(dur) + 's" begin="' + fixed(-rnd(0, dur)) + 's" repeatCount="indefinite" rotate="auto" path="' + loopPath(pts) + '"/>' +
-      '<g transform="scale(' + scale + ')">' + wig + tail + body + '</g></g>';
-  }
-
   function drop(x, y, s) {
     return '<path transform="translate(' + x + ',' + y + ') scale(' + s + ')" d="M0,-22 C6,-10 16,2 16,12 A16,16 0 0 1 -16,12 C-16,2 -6,-10 0,-22Z" fill="#f98278"/>';
   }
@@ -217,13 +187,6 @@
           '<animate attributeName="cy" values="' + a[1] + ';' + (a[1] - 12) + ';' + a[1] + '" dur="' + (4 + i) + 's" repeatCount="indefinite"/></circle>';
       });
       s += bubbles(6, 760, 980, 520, 300, '#b9c4cf', 6, 10, 4, 8);
-      /* a crowd of free living microbes swimming through the water between the hosts */
-      var cols = ['#8cbbe9', '#ff8d80', '#bf86d0', '#ffd48a', '#7fc8b8'];
-      var zones = [[40, 30, 520, 330], [620, 30, 1410, 300], [430, 560, 940, 900], [40, 520, 460, 760], [880, 380, 1410, 620], [600, 280, 1100, 560]];
-      for (var m = 0; m < 28; m++) {
-        var z = zones[m % zones.length], kind = ['rod', 'coccus', 'rod', 'vibrio'][m % 4];
-        s += swimmer(kind, cols[m % cols.length], z, rnd(12, 22), fixed(rnd(1.4, 2)));
-      }
       return s;
     },
 
