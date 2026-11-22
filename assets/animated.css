@@ -63,13 +63,14 @@ figure.ill.reveal.in { opacity: 1; transform: none; }
 
 
 /* ---------- networks: cards and the co-author globe ---------- */
-.netcards { margin-top: 1.4rem; }
+.netcards { margin-top: 1.4rem; grid-auto-rows: 1fr; }
+.netcards .emo { margin-right: 0.5em; }
 .netcards .tool h3 { font-size: 1.05rem; }
 .globe-card { overflow: hidden; }
 figure.netglobe { margin: auto 0 0; padding-top: 6px; }
 figure.netglobe svg { display: block; width: 100%; height: auto; aspect-ratio: 1; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
 figure.netglobe svg:active { cursor: grabbing; }
-figure.netglobe .sphere { fill: url(#ocean); }
+figure.netglobe .sea { fill: #e3eef1; }
 figure.netglobe .rim { fill: url(#shade); stroke: #bcd1d7; stroke-width: 1; pointer-events: none; }
 figure.netglobe .grat { fill: none; stroke: #c3d6db; stroke-width: 0.6; }
 figure.netglobe .land { fill: #dde7e3; stroke: #b9cbc8; stroke-width: 0.6; }
