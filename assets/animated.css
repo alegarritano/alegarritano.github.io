@@ -33,9 +33,6 @@ body.depth { background: linear-gradient(90deg, var(--depth-bg, #fff) 0, var(--d
 /* ---------- research figures ---------- */
 .fig-anim { position: relative; }
 .fig-anim > svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; border-radius: 10px; overflow: hidden; }
-.fig-pause { position: absolute; right: 10px; bottom: 10px; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.5); background: rgba(0,16,36,0.6); color: #fff; font: 600 12px/1 var(--sans); cursor: pointer; display: grid; place-items: center; padding: 0; opacity: 0.7; transition: opacity 0.2s; }
-.fig-anim:hover .fig-pause, .fig-pause:focus-visible { opacity: 1; }
-.fig-pause:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
 
 /* illustrations settle in the first time they are scrolled to */
 figure.ill.reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
@@ -91,3 +88,5 @@ figure.netflat.wide { margin: 0.6rem 0 0; }
 figure.netflat.wide svg { aspect-ratio: auto; }
 .emo { margin-right: 0.5em; }
 .netcards { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+figure.netflat svg { cursor: grab; touch-action: pan-y; }
+figure.netflat svg:active { cursor: grabbing; }

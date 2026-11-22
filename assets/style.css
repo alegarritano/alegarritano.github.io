@@ -145,7 +145,7 @@ nav.subnav { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 0.95rem; 
 .tag.sand { color: #5b4418; background: var(--sand-tint); }
 
 /* research illustrations (inline svg) */
-.ill { margin: 1.4rem 0 1.8rem; max-width: none; }
+.ill { margin: 1.4rem auto 1.8rem; max-width: 680px; }
 .ill svg, .ill img { display: block; width: 100%; height: auto; }
 .ill img { border-radius: 10px; }
 .ill figcaption { font-size: 0.86rem; color: var(--muted); margin: 8px 4px 0; text-align: center; }

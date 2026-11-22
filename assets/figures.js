@@ -180,7 +180,7 @@
     /* hosts and places: the corals and sponges sway from their bases, each at its own pace, and the free living
        microbes bob with the big green alga, each a little out of step. The hosts are cut out by make_hosts_layers.py */
     hosts_microbiomes: function () {
-      var dir = SRC.replace(/hosts_microbiomes\.webp.*$/, 'hosts/');
+      var dir = SRC.replace(/img\/.*$/, 'img/hosts/');
       var HOSTS = [["cream_coral", 60, 115, 552, 535, 330, 600, 1.6, 6.5, -1.2], ["gorgonian", 448, 56, 510, 586, 560, 640, 2.2, 5.5, -3.1], ["orange_sponge", 781, 333, 349, 410, 950, 740, 1.4, 7, -0.4], ["tube_sponge", 1095, 342, 325, 403, 1240, 740, 1.8, 6, -4.2], ["soft_coral", 21, 518, 519, 477, 260, 990, 1.4, 7.5, -2.6]];
       var FREE = [[504, 126, 15, 15], [943, 130, 14, 14], [444, 146, 25, 19], [531, 142, 15, 14], [922, 149, 14, 14], [141, 218, 29, 20], [109, 245, 15, 15], [1154, 320, 15, 15], [1041, 325, 25, 19], [1126, 379, 28, 20], [150, 487, 24, 19], [757, 485, 15, 15], [675, 500, 24, 19], [101, 510, 14, 13], [522, 515, 15, 14], [709, 535, 28, 21], [492, 529, 14, 13], [68, 534, 15, 15], [1084, 595, 28, 22], [1101, 653, 29, 21], [1080, 693, 27, 21], [458, 718, 24, 20], [382, 728, 22, 18], [486, 795, 23, 18], [846, 801, 14, 14], [682, 823, 22, 20], [825, 820, 14, 14], [550, 845, 25, 18], [1164, 860, 25, 19], [1089, 860, 14, 14], [883, 874, 27, 21], [1078, 878, 14, 14], [749, 881, 14, 14], [1060, 907, 16, 15]];
       var s = DEFS + '<image href="' + dir + 'bg.webp" width="1448" height="1086"/>';
@@ -251,7 +251,7 @@
     var box = { x: 0, y: CROP_Y, w: 1448, h: CROP_H };
     if (thumb) {
       if (key === 'theme-carbon-fixation') { box = { x: 225, y: 72, w: 1000, h: 735.3 }; }
-      key = { 'theme-soil': 'illustration_soil', 'theme-tools': 'illustration_tools', 'theme-symbiosis': 'illustration_symbiosis', 'theme-identity': 'illustration_identity', 'theme-carbon-fixation': 'cfp_illustration' }[key];
+      key = { 'theme-soil': 'illustration_soil', 'theme-tools': 'illustration_tools', 'theme-symbiosis': 'illustration_symbiosis', 'theme-identity': 'illustration_identity', 'theme-hosts': 'hosts_microbiomes', 'theme-carbon-fixation': 'cfp_illustration' }[key];
     }
     if (!key || !BUILD[key]) { return; }
     var wrap = document.createElement(thumb ? 'span' : 'div');
@@ -272,14 +272,6 @@
     var user = reduce ? 'paused' : 'auto', visible = false, btn = null;
     function set(run) { if (run) { svg.unpauseAnimations(); } else { svg.pauseAnimations(); } }
     set(false);
-    if (!thumb) {
-      btn = document.createElement('button');
-      btn.type = 'button'; btn.className = 'fig-pause';
-      wrap.appendChild(btn);
-      var label = function () { var p = user === 'paused'; btn.textContent = p ? '▶' : '❚❚'; btn.setAttribute('aria-label', p ? 'Play this animation' : 'Pause this animation'); };
-      label();
-      btn.addEventListener('click', function () { user = user === 'paused' ? 'auto' : 'paused'; label(); set(visible && user !== 'paused'); });
-    }
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (es) {
         visible = es[0].isIntersecting;

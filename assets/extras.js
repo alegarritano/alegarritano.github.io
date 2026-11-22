@@ -132,7 +132,23 @@
         })(t0);
       }
       go(-1, 0);
-      return { go: go, stop: function () { if (anim) { cancelAnimationFrame(anim); anim = null; } } };
+      /* dragging pans the map and stops the tour for good */
+      var api = { go: go, stop: function () { if (anim) { cancelAnimationFrame(anim); anim = null; } } }, drag = null;
+      k.svg.addEventListener('pointerdown', function (e) {
+        if (api.onUser) { api.onUser(); }
+        api.stop();
+        drag = { x: e.clientX, y: e.clientY, c: st.c.slice() };
+        k.svg.setPointerCapture(e.pointerId);
+      });
+      k.svg.addEventListener('pointermove', function (e) {
+        if (!drag) { return; }
+        var f = W / k.svg.getBoundingClientRect().width * 180 / Math.PI / st.k;
+        st = { k: st.k, c: [drag.c[0] - (e.clientX - drag.x) * f, Math.max(-60, Math.min(70, drag.c[1] + (e.clientY - drag.y) * f))] };
+        render();
+      });
+      k.svg.addEventListener('pointerup', function () { drag = null; });
+      k.svg.addEventListener('pointercancel', function () { drag = null; });
+      return api;
     }
 
     /* the tour: the whole view for 7 s, then Portugal and France, the rest of Europe, Thuwal, Brazil and Australia,
