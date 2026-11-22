@@ -173,20 +173,22 @@
       return s;
     },
 
-    /* hosts and places: drifting particles, the magnified patches inside each host glow in turn */
+    /* hosts and places: the corals and sponges sway from their bases, each at its own pace, and the free living
+       microbes bob with the big green alga, each a little out of step. The hosts are cut out by make_hosts_layers.py */
     hosts_microbiomes: function () {
-      var s = DEFS + wiggle({ cx: 580, cy: 735, rx: 72, ry: 98, cover: '#06101a', bob: 10, dur: 4 }) + wiggle({ cx: 752, cy: 700, rx: 74, ry: 128, cover: '#06101a', bob: 12, dur: 5 }) + snow(14, 40, 1400, -20, 800, '#8f98a3');
-      var patches = [[385, 555, 85, 80], [592, 590, 70, 60], [950, 630, 85, 70], [1262, 655, 82, 75], [222, 885, 75, 72], [382, 885, 75, 72]];
-      patches.forEach(function (p, i) {
-        s += '<ellipse cx="' + p[0] + '" cy="' + p[1] + '" rx="' + p[2] + '" ry="' + p[3] + '" fill="none" stroke="#fff3d6" stroke-width="5" opacity="0">' +
-          '<animate attributeName="opacity" values="0;0.95;0;0" keyTimes="0;0.15;0.3;1" dur="6.6s" begin="' + fixed(i * 1.1) + 's" repeatCount="indefinite"/></ellipse>';
+      var dir = SRC.replace(/hosts_microbiomes\.webp.*$/, 'hosts/');
+      var HOSTS = [["cream_coral", 60, 115, 552, 535, 330, 600, 1.6, 6.5, -1.2], ["gorgonian", 448, 56, 510, 586, 560, 640, 2.2, 5.5, -3.1], ["orange_sponge", 781, 333, 349, 410, 950, 740, 1.4, 7, -0.4], ["tube_sponge", 1095, 342, 325, 403, 1240, 740, 1.8, 6, -4.2], ["soft_coral", 21, 518, 519, 477, 260, 990, 1.4, 7.5, -2.6]];
+      var FREE = [[504, 126, 15, 15], [943, 130, 14, 14], [444, 146, 25, 19], [531, 142, 15, 14], [922, 149, 14, 14], [141, 218, 29, 20], [109, 245, 15, 15], [1154, 320, 15, 15], [1041, 325, 25, 19], [1126, 379, 28, 20], [150, 487, 24, 19], [757, 485, 15, 15], [675, 500, 24, 19], [101, 510, 14, 13], [522, 515, 15, 14], [709, 535, 28, 21], [492, 529, 14, 13], [68, 534, 15, 15], [1084, 595, 28, 22], [1101, 653, 29, 21], [1080, 693, 27, 21], [458, 718, 24, 20], [382, 728, 22, 18], [486, 795, 23, 18], [846, 801, 14, 14], [682, 823, 22, 20], [825, 820, 14, 14], [550, 845, 25, 18], [1164, 860, 25, 19], [1089, 860, 14, 14], [883, 874, 27, 21], [1078, 878, 14, 14], [749, 881, 14, 14], [1060, 907, 16, 15]];
+      var s = DEFS + '<image href="' + dir + 'bg.webp" width="1448" height="1086"/>';
+      HOSTS.forEach(function (h) {
+        var px = h[5], py = h[6], a = h[7];
+        s += '<g><animateTransform attributeName="transform" type="rotate" values="' + (-a) + ' ' + px + ' ' + py + ';' + a + ' ' + px + ' ' + py + ';' + (-a) + ' ' + px + ' ' + py + '" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="' + h[8] + 's" begin="' + h[9] + 's" repeatCount="indefinite"/>' +
+          '<image href="' + dir + 'host_' + h[0] + '.webp" x="' + h[1] + '" y="' + h[2] + '" width="' + h[3] + '" height="' + h[4] + '"/></g>';
       });
-      /* algae and diatom bob gently: a faint halo that drifts up and down with them */
-      [[570, 775, 55], [755, 760, 70], [990, 840, 75]].forEach(function (a, i) {
-        s += '<circle cx="' + a[0] + '" cy="' + a[1] + '" r="' + a[2] + '" fill="#d6e8a0" opacity="0.12">' +
-          '<animate attributeName="cy" values="' + a[1] + ';' + (a[1] - 12) + ';' + a[1] + '" dur="' + (4 + i) + 's" repeatCount="indefinite"/></circle>';
-      });
-      s += bubbles(6, 760, 980, 520, 300, '#b9c4cf', 6, 10, 4, 8);
+      s += wiggle({ cx: 752, cy: 700, rx: 74, ry: 128, cover: '#06101a', bob: 12, dur: 5 });
+      s += wiggle({ cx: 580, cy: 735, rx: 72, ry: 98, cover: '#06101a', bob: 10, dur: 5 });
+      s += wiggle({ cx: 990, cy: 840, rx: 78, ry: 60, cover: '#06101a', bob: 6, dur: 5 });
+      FREE.forEach(function (f) { s += wiggle({ cx: f[0], cy: f[1], rx: f[2], ry: f[3], cover: '#06101a', bob: 10, dur: 5 }); });
       return s;
     },
 
