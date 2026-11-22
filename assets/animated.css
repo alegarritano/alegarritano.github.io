@@ -64,7 +64,6 @@ figure.ill.reveal.in { opacity: 1; transform: none; }
 
 /* ---------- networks: cards and the co-author globe ---------- */
 .netcards { margin-top: 1.4rem; grid-auto-rows: 1fr; }
-.netcards .emo { margin-right: 0.5em; }
 .netcards .tool h3 { font-size: 1.05rem; }
 .globe-card { overflow: hidden; }
 figure.netglobe { margin: auto 0 0; padding-top: 6px; }
@@ -86,5 +85,9 @@ figure.netglobe.in .pin { opacity: 1; }
 figure.netglobe .pin-label { font: 600 17px var(--sans); fill: var(--ink-2); paint-order: stroke; stroke: rgba(244,249,250,0.95); stroke-width: 4px; }
 @media (prefers-reduced-motion: reduce) { figure.netglobe .route { stroke-dashoffset: 0; } figure.netglobe.in .ring { animation: none; } figure.netglobe .pin { transition: none; } }
 figure.netglobe .pin-label .cc { font-weight: 500; fill: var(--muted); }
-figure.netflat .pin-label { opacity: 0; transition: opacity 0.4s; }
-figure.netflat.zoomed .pin-label { opacity: 1; }
+figure.netflat .pin-label.minor { opacity: 0; transition: opacity 0.4s; }
+figure.netflat.zoomed .pin-label.minor { opacity: 1; }
+figure.netflat.wide { margin: 0.6rem 0 0; }
+figure.netflat.wide svg { aspect-ratio: auto; }
+.emo { margin-right: 0.5em; }
+.netcards { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }

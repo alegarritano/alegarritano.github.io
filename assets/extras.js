@@ -49,9 +49,11 @@
       })
       .catch(function () {});
 
-    var S = 600, NSs = 'http://www.w3.org/2000/svg';
+    var S = 600, W = 960, H = 380, NSs = 'http://www.w3.org/2000/svg';
     var REGIONS = [['Lisbon', 'Perpignan'], ['Konstanz', 'Kiel', 'Kongens Lyngby', 'Umeå'], ['Thuwal'], ['Rio de Janeiro', 'São Paulo'], ['Sydney', 'Brisbane']];
     var LEFT = { 'São Paulo': 1, 'Kiel': 1 };
+    /* names that crowd their neighbours on the whole world view appear only once the map zooms in */
+    var MINOR = { 'Konstanz': 1, 'Kongens Lyngby': 1, 'Perpignan': 1, 'Brisbane': 1 };
     function ease(f) { return f < 0.5 ? 4 * f * f * f : 1 - Math.pow(-2 * f + 2, 3) / 2; }
 
     function prepare(data, topo) {
@@ -68,7 +70,7 @@
 
     /* shared drawing: routes from Sydney, dots with names and country codes */
     function scaffold(fig, sh, label, extraDefs, under) {
-      fig.innerHTML = '<svg viewBox="0 0 ' + S + ' ' + S + '" role="img" aria-label="' + label + ': ' +
+      fig.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + label + ': ' +
         sh.list.filter(function (c) { return c !== sh.home; }).map(function (c) { return c.city; }).join(', ') + '">' +
         '<defs>' + extraDefs + '</defs>' + under + '</svg>';
       var svg = fig.querySelector('svg'), routes = [], pins = [];
@@ -83,7 +85,7 @@
         pg.setAttribute('class', 'pin' + (c === sh.home ? ' home' : ''));
         pg.style.setProperty('--d', (c === sh.home ? 0 : 500 + i * 140) + 'ms');
         pg.innerHTML = '<title>' + c.city + ': ' + c.names.join(', ') + '</title><circle class="ring" r="' + rad.toFixed(1) + '"/><circle class="dot" r="' + rad.toFixed(1) + '"/>' +
-          '<text class="pin-label" x="' + (L ? -(rad + 5) : rad + 5).toFixed(1) + '" y="5" text-anchor="' + (L ? 'end' : 'start') + '">' + c.city + ' <tspan class="cc">' + (c.country || '') + '</tspan></text>';
+          '<text class="pin-label' + (MINOR[c.city] ? ' minor' : '') + '" x="' + (L ? -(rad + 5) : rad + 5).toFixed(1) + '" y="5" text-anchor="' + (L ? 'end' : 'start') + '">' + c.city + ' <tspan class="cc">' + (c.country || '') + '</tspan></text>';
         svg.querySelector('.pins').appendChild(pg);
         pins.push([pg, c]);
       });
@@ -92,9 +94,9 @@
 
     function flat(fig, sh) {
       var d3 = window.d3;
-      var proj = d3.geoEquirectangular().translate([S / 2, S / 2]).precision(0.5), path = d3.geoPath(proj);
+      var proj = d3.geoEquirectangular().translate([W / 2, H / 2]).precision(0.5), path = d3.geoPath(proj);
       var k = scaffold(fig, sh, 'Flat map linking Sydney to the cities where my co-authors are based', '',
-        '<rect class="sea" width="' + S + '" height="' + S + '" rx="12"/><path class="grat"/><path class="land"/><g class="routes"></g><g class="pins"></g>');
+        '<rect class="sea" width="' + W + '" height="' + H + '" rx="12"/><path class="grat"/><path class="land"/><g class="routes"></g><g class="pins"></g>');
       var gratP = k.svg.querySelector('.grat'), landP = k.svg.querySelector('.land');
       var st = { k: 1, c: [0, 0] };
       function render() {
@@ -107,15 +109,16 @@
         fig.classList.toggle('zoomed', st.k > START.k * 1.6);
       }
       function fitTo(obj, pad, right) {
-        var t = d3.geoEquirectangular().fitExtent([[pad, pad], [S - (right || pad), S - pad]], obj);
-        return { k: t.scale(), c: t.invert([S / 2, S / 2]) };
+        var t = d3.geoEquirectangular().fitExtent([[pad, pad], [W - (right || pad), H - pad]], obj);
+        return { k: t.scale(), c: t.invert([W / 2, H / 2]) };
       }
       function region(i) {
         var pts = [];
         REGIONS[i].forEach(function (n) { var c = sh.cities[n]; if (c) { pts.push([c.lon - 5, c.lat - 4], [c.lon + 5, c.lat + 4]); } });
-        return fitTo({ type: 'MultiPoint', coordinates: pts }, 70, 150);
+        return fitTo({ type: 'MultiPoint', coordinates: pts }, 50, 170);
       }
-      var START = fitTo({ type: 'Sphere' }, 6);
+      /* the whole world, cut to 80 N and 60 S */
+      var START = { k: W / (2 * Math.PI), c: [10, 10] };
       var anim = null;
       function go(i, ms) {
         var a = { k: st.k, c: st.c.slice() }, b = i < 0 ? START : region(i), t0 = performance.now();
@@ -132,7 +135,7 @@
       return { go: go, stop: function () { if (anim) { cancelAnimationFrame(anim); anim = null; } } };
     }
 
-    /* the tour: the whole view for 5 s, then Portugal and France, the rest of Europe, Thuwal, Brazil and Australia,
+    /* the tour: the whole view for 7 s, then Portugal and France, the rest of Europe, Thuwal, Brazil and Australia,
        each move taking 1.6 s and each stop held for 2 s. It runs only while on screen and stops for good on a drag. */
     function tour(fig, view) {
       if (reduce) { fig.classList.add('in'); return; }
@@ -149,7 +152,7 @@
       if ('IntersectionObserver' in window) {
         new IntersectionObserver(function (es) {
           visible = es[0].isIntersecting;
-          if (visible && on && !timer) { timer = setTimeout(next, started ? 1000 : 5000); started = true; }
+          if (visible && on && !timer) { timer = setTimeout(next, started ? 1000 : 7000); started = true; }
           if (!visible && timer) { clearTimeout(timer); timer = null; }
         }, { threshold: 0.4 }).observe(fig);
       }
