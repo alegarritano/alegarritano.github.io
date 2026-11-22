@@ -277,19 +277,25 @@
   var CROP_Y = (1086 - 1448 * 200 / 272) / 2, CROP_H = 1448 * 200 / 272;
   function attach(img, thumb) {
     var key = (img.getAttribute('src') || '').replace(/^.*\//, '').replace(/\.(webp|jpg)$/, '');
-    if (thumb) { key = { 'theme-soil': 'illustration_soil', 'theme-tools': 'illustration_tools', 'theme-symbiosis': 'illustration_symbiosis', 'theme-identity': 'illustration_identity' }[key]; }
+    /* crop box of each home page preview in the full illustration's pixels: the four webp previews are centre crops,
+       the carbon fixation preview is a crop of the tree (found by matching the pixels) */
+    var box = { x: 0, y: CROP_Y, w: 1448, h: CROP_H };
+    if (thumb) {
+      if (key === 'theme-carbon-fixation') { box = { x: 225, y: 72, w: 1000, h: 735.3 }; }
+      key = { 'theme-soil': 'illustration_soil', 'theme-tools': 'illustration_tools', 'theme-symbiosis': 'illustration_symbiosis', 'theme-identity': 'illustration_identity', 'theme-carbon-fixation': 'cfp_illustration' }[key];
+    }
     if (!key || !BUILD[key]) { return; }
     var wrap = document.createElement(thumb ? 'span' : 'div');
     wrap.className = thumb ? 'fig-anim thumb-anim' : 'fig-anim';
     img.parentNode.insertBefore(wrap, img);
     wrap.appendChild(img);
     var svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('viewBox', thumb ? '0 ' + fixed(CROP_Y) + ' 1448 ' + fixed(CROP_H) : '0 0 1448 1086');
+    svg.setAttribute('viewBox', thumb ? box.x + ' ' + fixed(box.y) + ' ' + box.w + ' ' + fixed(box.h) : '0 0 1448 1086');
     svg.setAttribute('preserveAspectRatio', 'none');
     svg.setAttribute('aria-hidden', 'true');
     svg.setAttribute('focusable', 'false');
     SRC = img.currentSrc || img.src;
-    IMGBOX = thumb ? 'x="0" y="' + fixed(CROP_Y) + '" width="1448" height="' + fixed(CROP_H) + '"' : 'width="1448" height="1086"';
+    IMGBOX = thumb ? 'x="' + box.x + '" y="' + fixed(box.y) + '" width="' + box.w + '" height="' + fixed(box.h) + '"' : 'width="1448" height="1086"';
     svg.innerHTML = BUILD[key]();
     wrap.appendChild(svg);
     var user = reduce ? 'paused' : 'auto', visible = false, btn = null;

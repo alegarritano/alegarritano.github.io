@@ -160,9 +160,6 @@
         b.x = Math.min(W - b.w, Math.max(0, b.x)); b.y = Math.min(H - b.h, Math.max(0, b.y));
         return b;
       }
-      var chip = document.createElement('div');
-      chip.className = 'map-chip'; chip.setAttribute('aria-hidden', 'true');
-      fig.appendChild(chip);
       var tourOn = !reduce, tourStep = 0, tourTimer = null, anim = null, onScreen = false;
       function glide(to, ms) {
         var from = { x: view.x, y: view.y, w: view.w, h: view.h }, t0 = performance.now();
@@ -181,11 +178,6 @@
         if (!tourOn || !onScreen) { return; }
         var region = tourStep % REGIONS.length, names = REGIONS[region].filter(function (nm) { return XY[nm]; });
         glide(boxFor(names) || WHOLE, 2000);
-        chip.classList.remove('show');
-        setTimeout(function () {
-          chip.textContent = names.length > 1 ? names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1] : names[0];
-          chip.classList.add('show');
-        }, 1500);
         tourStep++;
         tourTimer = setTimeout(tick, 5000);
       }
@@ -194,7 +186,6 @@
         tourOn = false;
         if (tourTimer) { clearTimeout(tourTimer); tourTimer = null; }
         if (anim) { cancelAnimationFrame(anim); anim = null; }
-        chip.classList.remove('show');
       }
       ['pointerdown', 'dblclick', 'wheel'].forEach(function (ev) { svg.addEventListener(ev, stopTour, { capture: true, passive: true }); });
       if ('IntersectionObserver' in window) {
