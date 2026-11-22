@@ -80,8 +80,7 @@
       fig.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="World map of co-author institutions, linked to Sydney: ' +
         list.filter(function (c) { return c !== home; }).map(function (c) { return c.city; }).join(', ') + '">' +
         '<defs><clipPath id="mapclip"><rect width="' + W + '" height="' + H + '" rx="10"/></clipPath></defs><g clip-path="url(#mapclip)">' +
-        '<rect width="' + W + '" height="' + H + '" class="sea"/><g class="land"></g><g class="grat">' + grat + '</g>' + arcs + dots + labels + '</g></svg>' +
-        '<figcaption>' + data.institutions.length + ' institutions in ' + n + ' cities besides Sydney. Point at a dot for the institutions. The map tours the regions until you zoom or drag it yourself. Source: OpenAlex affiliations for the papers with a DOI on the Publications page.</figcaption>';
+        '<rect width="' + W + '" height="' + H + '" class="sea"/><g class="land"></g><g class="grat">' + grat + '</g>' + arcs + dots + labels + '</g></svg>';
       if (reduce) { fig.classList.add('in'); } else { onView(fig, function () { fig.classList.add('in'); }, 0.3); }
 
       /* zoom and pan: buttons, double click, trackpad pinch (ctrl + wheel), drag, and two finger pinch on touch screens.
@@ -90,7 +89,7 @@
       var tools = document.createElement('div');
       tools.className = 'map-tools';
       tools.innerHTML = '<button type="button" data-z="in" aria-label="Zoom in">+</button><button type="button" data-z="out" aria-label="Zoom out">−</button><button type="button" data-z="reset" aria-label="Show the whole map">⟲</button>';
-      fig.insertBefore(tools, fig.querySelector('figcaption'));
+      fig.appendChild(tools);
       var base = [];
       svg.querySelectorAll('.pin circle').forEach(function (c) { base.push([c, +c.getAttribute('r')]); });
       var labels0 = [];
@@ -171,6 +170,9 @@
         b.x = Math.min(W - b.w, Math.max(0, b.x)); b.y = Math.min(H - b.h, Math.max(0, b.y));
         return b;
       }
+      var chip = document.createElement('div');
+      chip.className = 'map-chip'; chip.setAttribute('aria-hidden', 'true');
+      fig.insertBefore(chip, tools);
       var tourOn = !reduce, tourStep = 0, tourTimer = null, anim = null, onScreen = false;
       function glide(to, ms) {
         var from = { x: view.x, y: view.y, w: view.w, h: view.h }, t0 = performance.now();
@@ -187,8 +189,13 @@
       function tick() {
         tourTimer = null;
         if (!tourOn || !onScreen) { return; }
-        var region = Math.floor(tourStep / 2) % REGIONS.length, inward = tourStep % 2 === 0;
-        glide(inward ? (boxFor(REGIONS[region]) || WHOLE) : WHOLE, 1400);
+        var region = tourStep % REGIONS.length, names = REGIONS[region].filter(function (nm) { return XY[nm]; });
+        glide(boxFor(names) || WHOLE, 2000);
+        chip.classList.remove('show');
+        setTimeout(function () {
+          chip.textContent = names.length > 1 ? names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1] : names[0];
+          chip.classList.add('show');
+        }, 1500);
         tourStep++;
         tourTimer = setTimeout(tick, 5000);
       }
@@ -197,13 +204,14 @@
         tourOn = false;
         if (tourTimer) { clearTimeout(tourTimer); tourTimer = null; }
         if (anim) { cancelAnimationFrame(anim); anim = null; }
+        chip.classList.remove('show');
       }
       ['pointerdown', 'dblclick', 'wheel'].forEach(function (ev) { svg.addEventListener(ev, stopTour, { capture: true, passive: true }); });
       tools.addEventListener('click', stopTour, true);
       if ('IntersectionObserver' in window) {
         new IntersectionObserver(function (es) {
           onScreen = es[0].isIntersecting;
-          if (onScreen && tourOn && !tourTimer) { tourTimer = setTimeout(tick, tourStep ? 1200 : 3000); }
+          if (onScreen && tourOn && !tourTimer) { tourTimer = setTimeout(tick, tourStep ? 1200 : 2500); }
           if (!onScreen && tourTimer) { clearTimeout(tourTimer); tourTimer = null; }
         }, { threshold: 0.4 }).observe(fig);
       }
