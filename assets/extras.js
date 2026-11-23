@@ -56,8 +56,8 @@
 
     /* career line: from the current work down through the PhD to the master's, filling in as the page scrolls */
     var content = document.querySelector('.content');
-    var stops = [['soil', '2025'], ['phd', '2020'], ['masters', '2015']]
-      .map(function (s) { return { el: document.getElementById(s[0]), year: s[1] }; })
+    var stops = [['postdoc', '2025 to<br>present', 'soil'], ['phd', '2020'], ['masters', '2015']]
+      .map(function (s) { return { el: document.getElementById(s[0]) || (s[2] ? document.getElementById(s[2]) : null), year: s[1] }; })
       .filter(function (s) { return s.el; });
     var last = content.querySelector('.theme:last-of-type') || content.lastElementChild;
     if (stops.length && window.matchMedia('(min-width: 880px)').matches !== undefined) {
