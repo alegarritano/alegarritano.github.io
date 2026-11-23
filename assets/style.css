@@ -326,3 +326,7 @@ nav.subnav { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 0.95rem; 
 .item .cite { position: relative; z-index: 1; margin-left: 12px; padding: 4px 0; border: 0; background: none; font: inherit; color: var(--accent-2); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 2px; cursor: pointer; }
 .item .cite:hover { color: var(--accent); text-decoration-color: currentColor; }
 .item .cite.done { color: var(--muted); text-decoration: none; }
+
+/* Recent: automatic paper entries read as a title line, so no justified stretching and the link wraps like text */
+.timeline .what.paper { text-align: left; hyphens: manual; }
+.timeline .what.paper a { display: inline; padding: 0; }
