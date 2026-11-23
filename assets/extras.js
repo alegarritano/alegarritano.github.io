@@ -26,6 +26,70 @@
 
   var page = document.body.dataset.page;
 
+  /* ---------- Research: wave dividers in the element colours, and a career line beside the text ---------- */
+  if (page === 'research') {
+    var COLS = ['#e8a03c', '#5f93e0', '#e2565f'];   /* carbon, nitrogen, phosphorus, as in the banner */
+    function wave(phase, amp) {
+      var d = 'M0,' + (9 + amp * Math.sin(phase)).toFixed(2);
+      for (var x = 6; x <= 600; x += 6) { d += ' L' + x + ',' + (9 + amp * Math.sin(phase + x / 38)).toFixed(2); }
+      return d;
+    }
+    var targets = [].slice.call(document.querySelectorAll('.content .theme, .content .stage')).filter(function (el) {
+      if (el.classList.contains('theme')) {
+        var prev = el.previousElementSibling;
+        if (!prev || prev.classList.contains('stage')) { return false; }
+        if (el === document.querySelector('.content .theme')) { return false; }
+      }
+      return true;
+    });
+    targets.forEach(function (el) {
+      var div = document.createElement('div');
+      div.className = 'divider';
+      div.setAttribute('aria-hidden', 'true');
+      div.innerHTML = '<svg viewBox="0 0 600 18" preserveAspectRatio="none">' + COLS.map(function (c, i) {
+        return '<path d="' + wave(i * 2.1, 4 - i * 0.6) + '" stroke="' + c + '" pathLength="1" style="--d:' + (i * 180) + 'ms"/>';
+      }).join('') + '</svg>';
+      el.parentNode.insertBefore(div, el);
+      if (reduce) { div.classList.add('in'); } else { onView(div, function () { div.classList.add('in'); }, 0.6); }
+    });
+    document.body.classList.add('has-dividers');
+
+    /* career line: from the current work down through the PhD to the master's, filling in as the page scrolls */
+    var content = document.querySelector('.content');
+    var stops = [['soil', '2025'], ['phd', '2020'], ['masters', '2015']]
+      .map(function (s) { return { el: document.getElementById(s[0]), year: s[1] }; })
+      .filter(function (s) { return s.el; });
+    var last = content.querySelector('.theme:last-of-type') || content.lastElementChild;
+    if (stops.length && window.matchMedia('(min-width: 880px)').matches !== undefined) {
+      var rail = document.createElement('div');
+      rail.className = 'career';
+      rail.setAttribute('aria-hidden', 'true');
+      rail.innerHTML = '<span class="track"></span><span class="fill"></span>' +
+        stops.map(function (s) { return '<span class="stop"><b>' + s.year + '</b></span>'; }).join('');
+      content.appendChild(rail);
+      var track = rail.querySelector('.track'), fill = rail.querySelector('.fill'), marks = rail.querySelectorAll('.stop');
+      function top(el) { return el.getBoundingClientRect().top - content.getBoundingClientRect().top; }
+      function place() {
+        var t0 = top(stops[0].el), t1 = last.getBoundingClientRect().bottom - content.getBoundingClientRect().top;
+        rail.style.top = t0 + 'px';
+        rail.style.height = (t1 - t0) + 'px';
+        stops.forEach(function (s, i) { marks[i].style.top = (top(s.el) - t0) + 'px'; });
+        progress();
+      }
+      function progress() {
+        var r = rail.getBoundingClientRect(), mid = window.innerHeight * 0.5;
+        var f = Math.max(0, Math.min(1, (mid - r.top) / r.height));
+        fill.style.height = (f * 100).toFixed(2) + '%';
+        marks.forEach(function (m) { m.classList.toggle('passed', m.getBoundingClientRect().top < mid); });
+      }
+      place();
+      window.addEventListener('scroll', function () { requestAnimationFrame(progress); }, { passive: true });
+      window.addEventListener('resize', place);
+      window.addEventListener('load', place);
+      if ('ResizeObserver' in window) { new ResizeObserver(place).observe(content); }
+    }
+  }
+
   /* ---------- Networks: a map linking Sydney to the cities of my co-authors ---------- */
   if (page === 'networks') {
     var figF = document.getElementById('collab-flat');
