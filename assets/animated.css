@@ -14,10 +14,10 @@
 
 /* 2. research page: the margins darken from sunlit to midnight as the page goes deeper */
 /* same layout as every other page: the page column stays white and only the space outside it takes the depth colour */
-body.depth { background: linear-gradient(90deg, var(--depth-bg, #fff) 0, var(--depth-bg, #fff) calc(50% - 490px), #fff calc(50% - 490px), #fff calc(50% + 490px), var(--depth-bg, #fff) calc(50% + 490px)); }
+body.depth { background: linear-gradient(90deg, var(--depth-bg, #fff) 0, var(--depth-bg, #fff) calc(50% - 560px), #fff calc(50% - 560px), #fff calc(50% + 560px), var(--depth-bg, #fff) calc(50% + 560px)); }
 /* phones and tablets: a thin depth line at the left edge instead of the gauge */
 .depth-line { position: fixed; left: 0; top: 0; bottom: 0; width: 5px; background: var(--depth-bg, #fff); z-index: 14; transition: background-color 1.2s ease-out; }
-@media (min-width: 1040px) { .depth-line { display: none; } }
+@media (min-width: 1180px) { .depth-line { display: none; } }
 
 @media (prefers-reduced-motion: reduce) {
   body.depth, .depth-line, .items .item { transition: none; }
