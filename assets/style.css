@@ -321,6 +321,3 @@ nav.subnav { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 0.95rem; 
 /* small inline links get a taller tap area */
 .timeline .what a, .item .links a, .item .venue a { display: inline-block; padding: 4px 0; }
 
-/* paper and article thumbnails share one look: a navy to pale teal tint that turns to full colour on hover */
-img.thumb[src*="thumbs/p-"] { filter: url(#duo); background: #0f3442; transition: filter 0.35s ease, transform 0.25s ease-out, box-shadow 0.25s; }
-.item:hover img.thumb[src*="thumbs/p-"], .item:focus-within img.thumb[src*="thumbs/p-"] { filter: none; }

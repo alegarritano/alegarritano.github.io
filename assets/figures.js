@@ -251,7 +251,10 @@
     var box = { x: 0, y: CROP_Y, w: 1448, h: CROP_H };
     if (thumb) {
       if (key === 'theme-carbon-fixation') { box = { x: 225, y: 72, w: 1000, h: 735.3 }; }
-      key = { 'theme-soil': 'illustration_soil', 'theme-tools': 'illustration_tools', 'theme-symbiosis': 'illustration_symbiosis', 'theme-hosts': 'hosts_microbiomes', 'theme-carbon-fixation': 'cfp_illustration' }[key];
+      /* Media previews: the sponge under marine snow, and the lens with the archaea, bacteria and phage */
+      if (key === 'media-sponge') { box = { x: 90, y: 150, w: 720, h: 529.4 }; }
+      if (key === 'media-lens') { box = { x: 583, y: 166, w: 800, h: 588.2 }; }
+      key = { 'theme-soil': 'illustration_soil', 'theme-tools': 'illustration_tools', 'theme-symbiosis': 'illustration_symbiosis', 'theme-hosts': 'hosts_microbiomes', 'theme-carbon-fixation': 'cfp_illustration', 'media-sponge': 'illustration_symbiosis', 'media-lens': 'illustration_symbiosis' }[key];
     }
     if (!key || !BUILD[key]) { return; }
     var wrap = document.createElement(thumb ? 'span' : 'div');
@@ -281,5 +284,5 @@
   }
 
   document.querySelectorAll('figure.ill img').forEach(function (img) { attach(img, false); });
-  document.querySelectorAll('#themes ~ .items img.thumb').forEach(function (img) { attach(img, true); });
+  document.querySelectorAll('#themes ~ .items img.thumb, body[data-page="media"] .items img.thumb').forEach(function (img) { attach(img, true); });
 })();
