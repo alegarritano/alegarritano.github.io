@@ -302,3 +302,31 @@
     }
   }
 })();
+
+/* Publications: copy a paper's citation to the clipboard */
+(function () {
+  function fallback(text) {
+    var t = document.createElement('textarea');
+    t.value = text; t.setAttribute('readonly', ''); t.style.position = 'fixed'; t.style.opacity = '0';
+    document.body.appendChild(t); t.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(t);
+    return ok ? Promise.resolve() : Promise.reject();
+  }
+  function copy(text) {
+    if (navigator.clipboard && window.isSecureContext) { return navigator.clipboard.writeText(text).catch(function () { return fallback(text); }); }
+    return fallback(text);
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('button.cite');
+    if (!b) { return; }
+    copy(b.getAttribute('data-cite')).then(function () {
+      b.textContent = 'Copied'; b.classList.add('done');
+      setTimeout(function () { b.textContent = 'Copy citation'; b.classList.remove('done'); }, 2000);
+    }, function () {
+      /* the browser refused the clipboard: select the citation so it can be copied by hand */
+      window.prompt('Copy this citation', b.getAttribute('data-cite'));
+    });
+  });
+})();

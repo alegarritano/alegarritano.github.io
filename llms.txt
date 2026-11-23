@@ -1,0 +1,42 @@
+# Alessandro N. Garritano
+
+> Microbial ecologist and bioinformatician. Postdoctoral Research Associate at The University of Sydney and Adjunct Fellow at UNSW Sydney. Studies how microbes move carbon, nitrogen and phosphorus through soils and through marine hosts such as deep sea sponges and corals.
+
+ORCID 0000-0002-8159-5178, Wikidata Q139979362. Papers are listed below with their DOIs; the DOI link is the authoritative version.
+
+## Pages
+
+- [Who am I](https://www.alessandrogarritano.com/): background, current work and research themes
+- [Research](https://www.alessandrogarritano.com/research.html): research questions from the Master's to the current postdoc, with the papers behind each
+- [Publications](https://www.alessandrogarritano.com/publications.html): all papers and preprints
+- [Networks](https://www.alessandrogarritano.com/networks.html): co-authors and the societies he serves
+- [Media](https://www.alessandrogarritano.com/media.html): news coverage and writing for general readers
+- [Contact](https://www.alessandrogarritano.com/contact.html)
+
+## Papers
+
+- N. Garritano, A, Hill LJ, Ribeiro B, Damasceno T, Medeiros L, Duarte G, Vilela CLS, Majzoub ME, Allen MA, Nappi J, Peixoto RS, Thomas T (2026). Ammonia oxidation and recalcitrant carbon degradation fuel mixotrophic growth in the symbiont community of a deep-sea sponge. Microbiome 14, 153. Published. https://doi.org/10.1186/s40168-026-02411-y
+- Thomas T, N. Garritano, A (2026). Symbiotic Ammonia Oxidation in the Marine Environment. Annual Review of Marine Science 18, 409–427. Published. https://doi.org/10.1146/annurev-marine-040824-032008
+- Allen MA, N. Garritano, A, Peixoto RS, Busch K, Slaby B, Hentschel U, Thomas T (2026). The novel, wide-spread sponge-associated phylum Spongivicinota shows metabolic complementarity to its sister-phylum Latescibacterota. ISME Communications 6, ycag317. Published. https://doi.org/10.1093/ismeco/ycag317
+- Modolon F, N. Garritano, A, Hugenholtz P, Voolstra CR, Keller-Costa T, Costa R, Thomas T, Peixoto RS (2026). Resolving the evolutionary duality of marine symbionts: redefining the genus Endozoicomonas and proposing Neoendozoicomonas gen. nov. ISME Communications 6, ycag123. Published. https://doi.org/10.1093/ismeco/ycag123
+- Hill LJ, Damasceno T, N. Garritano, A, Modolon F, Medeiros L, Vilela CLS, Duarte G, Thomas T, Peixoto RS (2026). Contrasting microbiomes in deep-sea scleractinian and octocoral species from the South Atlantic Ocean. Sustainable Microbiology 3, qvag048. Published. https://doi.org/10.1093/sumbio/qvag048
+- Allen MA, N. Garritano, A, Fraser VL, Peixoto RS, Busch K, Slaby B, Hentschel U, Thomas T (2026). Metagenome-assembled genomes and viral sequences from deep-sea sponges. Scientific Data. In press.
+- Fu Y, Li J, N. Garritano, A, Wang M, Holmes AJ, Liu SY (2026). Excreta microbiota as an age-associated proxy for gut microbial communities in broiler chickens. Frontiers in Microbiology. In press.
+- N. Garritano, A, Modolon F, Warren CR (2026). HiFiTaxa: a reproducible analysis pipeline for full length 16S rRNA gene and ITS amplicon sequencing from PacBio reads. bioRxiv. Under review. https://doi.org/10.64898/2026.11.03.763332
+- N. Garritano, A, Warren C, Holmes A, Liu S, Li J (2026). AmplinkOne: a reproducible and modular R workflow for downstream analysis of microbial marker-gene amplicon sequencing data. Under review.
+- Roager L, Schostag M, N. Garritano, A, Gram L, Egan S (2026). Dual transcriptomics reveal commensal interactions between microalgae and phycosphere bacteria. bioRxiv. Under review. https://doi.org/10.64898/2026.02.09.704904
+- Modolon F, N. Garritano, A, Hill LJ, Duarte G, Bendia A, De Moura R, Pellizari V, Thomas T, Peixoto RS (2025). Putative promiscuous symbionts in deep-sea corals and crinoids may contribute to nitrogen cycling. Microbiome 13, 234. Published. https://doi.org/10.1186/s40168-025-02229-0
+- N. Garritano, A, Zhang Z, Jia Y, Allen MA, Hill LJ, Kuzhiumparambil U, Hinkley C, Raina JB, Peixoto RS, Thomas T (2024). Simple Porifera holobiont reveals complex interactions between the host, an archaeon, a bacterium, and a phage. The ISME Journal 18, wrae197. Published. https://doi.org/10.1093/ismejo/wrae197
+- Ribeiro B, N. Garritano, A, Raimundo I, Delgadillo-Ordoñez N, Nappi J, Garcias-Bonet N, Villela H, Thomas T, Klautau M, Peixoto RS (2024). Not only for corals: exploring the uptake of beneficial microorganisms for corals by sponges. npj Biofilms and Microbiomes 10, 125. Published. https://doi.org/10.1038/s41522-024-00584-8
+- Hill LJ, Messias CSMA, Vilela CLS, N. Garritano, A, Villela HDM, do Carmo FL, Thomas T, Peixoto RS (2024). Bacteria associated with the in hospite Symbiodiniaceae’s phycosphere. iScience 27, 109531. Published. https://doi.org/10.1016/j.isci.2024.109531
+- N. Garritano, A, Majzoub ME, Ribeiro B, Damasceno T, Modolon F, Messias C, Vilela C, Duarte G, Hill L, Peixoto R, Thomas T (2023). Species-specific relationships between deep sea sponges and their symbiotic Nitrosopumilaceae. The ISME Journal 17, 1517–1519. Published. https://doi.org/10.1038/s41396-023-01439-4
+- N. Garritano, A, Song W, Thomas T (2022). Carbon fixation pathways across the bacterial and archaeal tree of life. PNAS Nexus 1, pgac226. Published. https://doi.org/10.1093/pnasnexus/pgac226
+- N. Garritano, A, Faber MO, De Sá LRV, Ferreira-Leitão VS (2018). Palm oil mill effluent (POME) as raw material for biohydrogen and methane production via dark fermentation. Renewable and Sustainable Energy Reviews 92, 676–684. Published. https://doi.org/10.1016/j.rser.2018.04.031
+- N. Garritano, A, De Sá LRV, Aguieiras ÉCG, Freire DMG, Ferreira-Leitão VS (2017). Efficient biohydrogen production via dark fermentation from hydrolized palm oil mill effluent by non-commercial enzyme preparation. International Journal of Hydrogen Energy 42, 29166–29174. Published. https://doi.org/10.1016/j.ijhydene.2017.10.025
+
+## Profiles
+
+- ORCID: https://orcid.org/0000-0002-8159-5178
+- Google Scholar: https://scholar.google.com/citations?user=conXSckAAAAJ
+- GitHub: https://github.com/alegarritano
+- Wikidata: https://www.wikidata.org/wiki/Q139979362

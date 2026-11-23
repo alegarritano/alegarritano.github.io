@@ -321,3 +321,8 @@ nav.subnav { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 0.95rem; 
 /* small inline links get a taller tap area */
 .timeline .what a, .item .links a, .item .venue a { display: inline-block; padding: 4px 0; }
 
+
+/* Publications: copy citation button, styled as a small link beside the DOI */
+.item .cite { position: relative; z-index: 1; margin-left: 12px; padding: 4px 0; border: 0; background: none; font: inherit; color: var(--accent-2); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 2px; cursor: pointer; }
+.item .cite:hover { color: var(--accent); text-decoration-color: currentColor; }
+.item .cite.done { color: var(--muted); text-decoration: none; }
