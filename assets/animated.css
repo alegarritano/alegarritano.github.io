@@ -14,10 +14,10 @@
 
 /* 2. research page: the margins darken from sunlit to midnight as the page goes deeper */
 /* same layout as every other page: the page column stays white and only the space outside it takes the depth colour */
-body.depth { background: linear-gradient(90deg, var(--depth-bg, #fff) 0, var(--depth-bg, #fff) calc(50% - 560px), #fff calc(50% - 560px), #fff calc(50% + 560px), var(--depth-bg, #fff) calc(50% + 560px)); }
+body.depth { background: linear-gradient(90deg, var(--depth-bg, #fff) 0, var(--depth-bg, #fff) calc(50% - 490px), #fff calc(50% - 490px), #fff calc(50% + 490px), var(--depth-bg, #fff) calc(50% + 490px)); }
 /* phones and tablets: a thin depth line at the left edge instead of the gauge */
 .depth-line { position: fixed; left: 0; top: 0; bottom: 0; width: 5px; background: var(--depth-bg, #fff); z-index: 14; transition: background-color 1.2s ease-out; }
-@media (min-width: 1180px) { .depth-line { display: none; } }
+@media (min-width: 1040px) { .depth-line { display: none; } }
 
 @media (prefers-reduced-motion: reduce) {
   body.depth, .depth-line, .items .item { transition: none; }
@@ -93,3 +93,10 @@ figure.netflat svg:active { cursor: grabbing; }
 /* Networks: the map section sits close under the bold opening line */
 #coauthors { margin-top: 0.8rem; }
 #coauthors h2 { margin-top: 0; margin-bottom: 0.5rem; }
+
+/* phones: the map is drawn at about a third of its size, so the labels are set larger in map units (about 11 px on screen) */
+@media (max-width: 560px) {
+  figure.netflat .pin-label { font-size: 30px; stroke-width: 6px; }
+  figure.netflat .pin-label.minor-phone { opacity: 0; transition: opacity 0.4s; }
+  figure.netflat.zoomed .pin-label.minor-phone { opacity: 1; }
+}

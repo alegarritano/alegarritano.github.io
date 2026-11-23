@@ -51,9 +51,11 @@
 
     var S = 600, W = 960, H = 420, NSs = 'http://www.w3.org/2000/svg';
     var REGIONS = [['Lisbon', 'Perpignan'], ['Konstanz', 'Kiel', 'Kongens Lyngby', 'Umeå'], ['Thuwal'], ['Rio de Janeiro', 'São Paulo'], ['Sydney', 'Brisbane']];
-    var LEFT = { 'São Paulo': 1, 'Kiel': 1 };
+    var LEFT = { 'São Paulo': 1, 'Kiel': 1, 'Sydney': 1 };
     /* names that crowd their neighbours on the whole world view appear only once the map zooms in */
     var MINOR = { 'Konstanz': 1, 'Kongens Lyngby': 1, 'Perpignan': 1, 'Brisbane': 1 };
+    /* on phones the labels are drawn larger, so these also wait for the zoom to avoid overlapping */
+    var MINOR_PHONE = { 'Kiel': 1, 'Lisbon': 1, 'São Paulo': 1 };
     function ease(f) { return f < 0.5 ? 4 * f * f * f : 1 - Math.pow(-2 * f + 2, 3) / 2; }
 
     function prepare(data, topo) {
@@ -85,7 +87,7 @@
         pg.setAttribute('class', 'pin' + (c === sh.home ? ' home' : ''));
         pg.style.setProperty('--d', (c === sh.home ? 0 : 500 + i * 140) + 'ms');
         pg.innerHTML = '<title>' + c.city + ': ' + c.names.join(', ') + '</title><circle class="ring" r="' + rad.toFixed(1) + '"/><circle class="dot" r="' + rad.toFixed(1) + '"/>' +
-          '<text class="pin-label' + (MINOR[c.city] ? ' minor' : '') + '" x="' + (L ? -(rad + 5) : rad + 5).toFixed(1) + '" y="5" text-anchor="' + (L ? 'end' : 'start') + '">' + c.city + ' <tspan class="cc">' + (c.country || '') + '</tspan></text>';
+          '<text class="pin-label' + (MINOR[c.city] ? ' minor' : '') + (MINOR_PHONE[c.city] ? ' minor-phone' : '') + '" x="' + (L ? -(rad + 5) : rad + 5).toFixed(1) + '" y="5" text-anchor="' + (L ? 'end' : 'start') + '">' + c.city + ' <tspan class="cc">' + (c.country || '') + '</tspan></text>';
         svg.querySelector('.pins').appendChild(pg);
         pins.push([pg, c]);
       });
