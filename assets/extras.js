@@ -94,19 +94,14 @@
   if (page === 'networks') {
     var figF = document.getElementById('collab-flat');
     if (!figF) { return; }
-    function load(src) {
-      return new Promise(function (ok, bad) { var sc = document.createElement('script'); sc.src = src; sc.onload = ok; sc.onerror = bad; document.head.appendChild(sc); });
-    }
-    /* d3-geo draws the projections and great circle routes, topojson-client decodes the coastlines */
-    load('https://cdn.jsdelivr.net/npm/d3-array@3.2.4/dist/d3-array.min.js')
-      .then(function () { return load('https://cdn.jsdelivr.net/npm/d3-geo@3.1.1/dist/d3-geo.min.js'); })
-      .then(function () { return load('https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js'); })
-      .then(function () {
-        return Promise.all([
-          fetch('assets/collaborations.json').then(function (r) { return r.json(); }),
-          fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/land-110m.json').then(function (r) { return r.json(); })
-        ]);
-      })
+    /* d3-geo draws the projections and great circle routes, topojson-client decodes the coastlines.
+       Both come in assets/map-libs.js, loaded by the page itself; the data files are preloaded in the head. */
+    var vq = (document.querySelector('script[src*="map-libs.js"]') || {}).src || '';
+    var ver = (vq.split('?')[1] || '');
+    Promise.all([
+      fetch('assets/collaborations.json' + (ver ? '?' + ver : '')).then(function (r) { return r.json(); }),
+      fetch('assets/land-110m.json').then(function (r) { return r.json(); })
+    ])
       .then(function (res) {
         var shared = prepare(res[0], res[1]);
         tour(figF, flat(figF, shared));
@@ -143,13 +138,13 @@
       sh.list.forEach(function (c, i) {
         if (c !== sh.home) {
           var r = document.createElementNS(NSs, 'path');
-          r.setAttribute('class', 'route'); r.setAttribute('pathLength', '1'); r.style.setProperty('--d', (i * 140) + 'ms');
+          r.setAttribute('class', 'route'); r.setAttribute('pathLength', '1'); r.style.setProperty('--d', (i * 60) + 'ms');
           svg.querySelector('.routes').appendChild(r);
           routes.push([r, { type: 'LineString', coordinates: [[sh.home.lon, sh.home.lat], [c.lon, c.lat]] }]);
         }
         var pg = document.createElementNS(NSs, 'g'), rad = 4 + 3 * Math.sqrt(c.papers), L = LEFT[c.city];
         pg.setAttribute('class', 'pin' + (c === sh.home ? ' home' : ''));
-        pg.style.setProperty('--d', (c === sh.home ? 0 : 500 + i * 140) + 'ms');
+        pg.style.setProperty('--d', (c === sh.home ? 0 : 300 + i * 60) + 'ms');
         pg.innerHTML = '<title>' + c.city + ': ' + c.names.join(', ') + '</title><circle class="ring" r="' + rad.toFixed(1) + '"/><circle class="dot" r="' + rad.toFixed(1) + '"/>' +
           '<text class="pin-label' + (MINOR[c.city] ? ' minor' : '') + (MINOR_PHONE[c.city] ? ' minor-phone' : '') + '" x="' + (L ? -(rad + 5) : rad + 5).toFixed(1) + '" y="5" text-anchor="' + (L ? 'end' : 'start') + '">' + c.city + ' <tspan class="cc">' + (c.country || '') + '</tspan></text>';
         svg.querySelector('.pins').appendChild(pg);
