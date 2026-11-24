@@ -107,7 +107,7 @@ figure.netflat svg:active { cursor: grabbing; }
 .divider + .stage { margin-top: 0.8rem; }
 .divider + .theme { margin-top: 0.6rem; }
 .divider svg { display: block; width: 100%; height: 18px; overflow: visible; }
-.divider path { fill: none; stroke-width: 2; stroke-linecap: round; stroke-opacity: 0.85; stroke-dasharray: 1; stroke-dashoffset: 1; vector-effect: non-scaling-stroke; }
+.divider path { fill: none; stroke-width: 2; stroke-linecap: round; stroke-opacity: 0.85; stroke-dasharray: 1; stroke-dashoffset: 1; }
 .divider.in path { transition: stroke-dashoffset 1.4s ease-in-out var(--d); stroke-dashoffset: 0; }
 
 /* ---------- Research: career line in the gap beside the text ---------- */

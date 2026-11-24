@@ -330,3 +330,9 @@ nav.subnav { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 0.95rem; 
 /* Recent: automatic paper entries read as a title line, so no justified stretching and the link wraps like text */
 .timeline .what.paper { text-align: left; hyphens: manual; }
 .timeline .what.paper a { display: inline; padding: 0; }
+
+/* Research cards: citation and attention badges under the links */
+.tool .metrics { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin: 0.3em 0 0; line-height: 1; }
+.tool .metrics:empty { display: none; }
+.tool .metrics > span { display: inline-block; }
+.tool .metrics a { text-decoration: none; margin: 0; padding: 0; }
