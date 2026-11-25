@@ -24,27 +24,36 @@
     window.addEventListener('resize', size);
     function reset() { ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.shadowBlur = 0; }
 
-    /* the wide art and the phone art (same picture, laid out narrower), with where things sit in each, as fractions of the art */
-    var ARTS = {
-      wide: {
-        file: 'banner.webp', IW: 4000, IH: 444, X0: 0.03, X1: 0.865,
-        loops: [{ cx: 0.458, cy: 0.52, rx: 0.375, ry: 0.30, tilt: -0.025 }, { cx: 0.460, cy: 0.50, rx: 0.385, ry: 0.36, tilt: 0.020 }, { cx: 0.455, cy: 0.53, rx: 0.39, ry: 0.33, tilt: 0 }],
-        sun: [0.049, 0.13], rain: [0.065, 0.2], ground: 0.34, plants: [0.105, 0.14, 0.175], plantY: 0.30,
-        osc: [[0.899, 0.47], [0.926, 0.46]], body: { x: 0.918, y: 0.64, rx: 0.044, ry: 0.19 }, floor: [0.855, 0.985]
-      },
-      phone: {
-        /* the phone art's loops were redrawn as these curves (soil to sponge, crossing in the middle), so the particles sit on them exactly */
-        file: 'banner_mobile_v2.webp', IW: 1800, IH: 300, X0: 0.17, X1: 0.89,
-        loops: [{ cx: 0.53, cy: 0.54, rx: 0.35, ry: 0.29, k: 0.11, w: 0.07 }, { cx: 0.53, cy: 0.54, rx: 0.35, ry: 0.31, k: 0.11, w: -0.07 }, { cx: 0.53, cy: 0.54, rx: 0.35, ry: 0.30, k: 0.11, w: 0 }],
-        sun: [0.075, 0.127], rain: [0.1, 0.29], ground: 0.31, plants: [0.153, 0.206, 0.253], plantY: 0.28,
-        osc: [[0.832, 0.467], [0.878, 0.473]], body: { x: 0.853, y: 0.667, rx: 0.045, ry: 0.2 }, floor: [0.78, 0.94]
-      }
+    /* where things sit in the art, as fractions of the wide art */
+    var WIDE = {
+      file: 'banner.webp', IW: 4000, IH: 444, X0: 0.03, X1: 0.865,
+      loops: [{ cx: 0.458, cy: 0.52, rx: 0.375, ry: 0.30, tilt: -0.025 }, { cx: 0.460, cy: 0.50, rx: 0.385, ry: 0.36, tilt: 0.020 }, { cx: 0.455, cy: 0.53, rx: 0.39, ry: 0.33, tilt: 0 }],
+      sun: [0.049, 0.13], rain: [0.065, 0.2], ground: 0.34, plants: [0.105, 0.14, 0.175], plantY: 0.30,
+      osc: [[0.899, 0.47], [0.926, 0.46]], body: { x: 0.918, y: 0.64, rx: 0.044, ry: 0.19 }, floor: [0.855, 0.985]
     };
+    /* phones get the same art with only the empty middle of the loops narrowed to fit a 6 to 1 strip
+       (made by previews/phone_banner.py); every position goes through the same narrowing */
+    var PHONE = {}; for (var key in WIDE) { PHONE[key] = WIDE[key]; }
+    PHONE.file = 'banner_phone.webp'; PHONE.IW = 1800; PHONE.IH = 300; PHONE.squeeze = true;
+    var SQ = (function () {
+      var N = 2000, s = [], F = [0], S = 0, i;
+      function sm(v) { v = Math.max(0, Math.min(1, v)); return v * v * (3 - 2 * v); }
+      for (i = 0; i <= N; i++) { var x = i / N; s.push(sm((x - 0.215) / 0.06) * (1 - sm((x - 0.775) / 0.06))); }
+      for (i = 1; i <= N; i++) { S += (s[i] + s[i - 1]) / 2 / N; }
+      var m = 1 - (1 / 3) / S;
+      for (i = 1; i <= N; i++) { F.push(F[i - 1] + (2 - (1 - m) * (s[i] + s[i - 1])) / 2 / N); }
+      for (i = 0; i <= N; i++) { F[i] /= F[N]; }
+      return function (fx) {
+        if (fx <= 0) { return fx * (F[1] - F[0]) * N; }
+        if (fx >= 1) { return 1 + (fx - 1) * (F[N] - F[N - 1]) * N; }
+        var p = fx * N, k = Math.floor(p); return F[k] + (F[k + 1] - F[k]) * (p - k);
+      };
+    })();
     function phone() { return W <= 560; }
-    function A() { return phone() ? ARTS.phone : ARTS.wide; }
+    function A() { return phone() ? PHONE : WIDE; }
     /* placed the way the stylesheet covers the banner with the art */
     function box() { var a = A(), k = Math.max(W / a.IW, H / a.IH), w = a.IW * k, h = a.IH * k; return { x: (W - w) / 2, y: (H - h) / 2, w: w, h: h }; }
-    function at(fx, fy) { var b = box(); return [b.x + fx * b.w, b.y + fy * b.h]; }
+    function at(fx, fy) { var b = box(); if (A().squeeze) { fx = SQ(fx); } return [b.x + fx * b.w, b.y + fy * b.h]; }
 
     /* three loops in the banner's own colours: carbon orange, nitrogen blue, phosphorus red */
     var loops = [
@@ -62,7 +71,6 @@
     function smooth(a, b, x) { return clamp((x - a) / (b - a)); }
     function pos(L, t) {
       var g = A().loops[L.i], a = t * Math.PI * 2;
-      if (g.w !== undefined) { return at(g.cx + g.rx * Math.cos(a), g.cy + g.k * Math.cos(a) + g.ry * Math.sin(a) + g.w * Math.sin(2 * a)); }
       var x = g.rx * Math.cos(a), y = g.ry * Math.sin(a), c = Math.cos(g.tilt), s = Math.sin(g.tilt);
       return at(g.cx + x * c - y * s, g.cy + x * s + y * c);
     }
@@ -120,7 +128,7 @@
           if (artFor !== a) { done = true; finish(); } else { return; }
         } else {
           if (drawStart === null) { drawStart = t - 0.5; }
-          var f = ease(clamp((t - drawStart) / DRAW)), xr = b.x + (a.X0 + (a.X1 - a.X0) * f) * b.w, edge = small ? 14 : 30;
+          var f = ease(clamp((t - drawStart) / DRAW)), xr = at(a.X0 + (a.X1 - a.X0) * f, 0)[0], edge = small ? 14 : 30;
           ctx.save(); ctx.beginPath(); ctx.rect(0, 0, Math.max(0, xr - edge), H); ctx.clip(); ctx.drawImage(ART, b.x, b.y, b.w, b.h); ctx.restore();
           for (var k = 0; k < 6; k++) {
             ctx.save(); ctx.globalAlpha = 1 - (k + 0.5) / 6; ctx.beginPath(); ctx.rect(Math.max(0, xr - edge + k * edge / 6), 0, edge / 6 + 0.5, H); ctx.clip();
