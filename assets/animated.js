@@ -59,7 +59,9 @@
 
     /* the draw in: the stylesheet first shows the art without the loops, and the full art is uncovered
        from the soil to the sponge, each loop led by a glowing head. It plays once per visit. */
-    var DRAW = 4.2, X0 = 0.03, X1 = 0.865;
+    var DRAW = 4.2, X0 = 0.03, X1 = 0.865, IMG = (document.querySelector('link[href*="assets/style.css"]') || { getAttribute: function () { return 'assets/'; } }).getAttribute('href').split('assets/')[0] + 'assets/img/';
+    var GLOW = new Image(), glowOK = false;
+    if (!phone()) { GLOW.onload = function () { glowOK = true; if (reduce) { draw(0); } }; GLOW.src = IMG + 'banner_glow.webp'; }
     var ART = new Image(), artOK = false;
     var done = reduce || root.classList.contains('banner-drawn') || phone(), doneAt = 0, drawStart = null;
     function finish() {
@@ -70,7 +72,7 @@
     else {
       ART.onload = function () { artOK = true; };
       ART.onerror = function () { done = true; finish(); };
-      ART.src = (document.querySelector('link[href*="assets/style.css"]') || { getAttribute: function () { return 'assets/'; } }).getAttribute('href').split('assets/')[0] + 'assets/img/banner.webp';
+      ART.src = IMG + 'banner.webp';
       /* if the art is slow, show it whole rather than keep the loops away */
       setTimeout(function () { if (!artOK && !done) { done = true; finish(); } }, 5000);
     }
@@ -155,12 +157,11 @@
 
       /* once drawn, the three loops glow and the particles run */
       var on = reduce ? 1 : done ? clamp((t - doneAt) / 0.8) : 0;
-      if (wide) {
-        loops.forEach(function (L) {
-          ctx.save(); ctx.shadowColor = rgba(L.col, 0.9); ctx.shadowBlur = 14; ctx.strokeStyle = rgba(L.col, 0.55 * on); ctx.lineWidth = 3; ctx.beginPath();
-          for (var s = 0; s <= 200; s++) { var q = pos(L, s / 200); if (s) { ctx.lineTo(q[0], q[1]); } else { ctx.moveTo(q[0], q[1]); } }
-          ctx.stroke(); ctx.restore();
-        });
+      /* the glow is a soft copy of the art's own loops, so it sits exactly on the drawn lines */
+      if (wide && glowOK && on > 0) {
+        ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.6 * on;
+        ctx.drawImage(GLOW, b.x, b.y, b.w, b.h);
+        reset();
       }
       parts.forEach(function (p, i) {
         if (!wide && i % 2) { return; }
