@@ -101,7 +101,7 @@
     /* the weather over the soil: sun or rain, picked at random, switching after 3 s and then every 5 s */
     var firstRain = Math.random() < 0.5 ? 1 : 0, drops = [], splashes = [], sparks = [], nextDrop = 0;
     /* the sponge pumps water out of its openings, and bubbles rise around it */
-    var jets = [], bubbles = [], nextBubble = 0;
+    var jets = [], bubbles = [], nextBubble = 0, nextRelease = 2;
 
     var t = 0, last = 0, visible = true, looping = false;
     function draw(dt) {
@@ -159,11 +159,12 @@
           d.y += d.v * dt;
           if (d.y > a.ground) {
             splashes.push({ x: d.x, t: t });
-            /* now and then the splash releases a nutrient that heads right, joins its loop and rides it for 5 s */
-            if (done && Math.random() < 0.3) {
+            /* now and then the splash releases a nutrient that heads right, joins its loop and rides it for 5 s.
+               About one every 3 s on average over the sun and rain cycle, the same as the sponge */
+            if (done && Math.random() < 0.15) {
               var L = loops[Math.floor(Math.random() * 3)], from = at(d.x, a.ground), join = 0.5, s2;
               for (s2 = 0.5; s2 < 0.75; s2 += 0.005) { if (pos(L, s2)[0] > from[0] + b.w * 0.05) { join = s2; break; } }
-              sparks.push({ x: d.x, L: L, join: join, t: t, r: 1.6 + Math.random() * 1.6 });
+              sparks.push({ fx: d.x, fy: a.ground, lift: 1, L: L, join: join, t: t, r: 1.6 + Math.random() * 1.6 });
             }
             return false;
           }
@@ -187,14 +188,14 @@
         dot(q[0], q[1], p.r, p.L.col, on);
         if (p.label && W >= 600) { ctx.font = '700 11px Inter, sans-serif'; ctx.fillStyle = rgba(p.L.col, on); ctx.fillText(p.L.el, q[0] + 6, q[1] - 6); }
       });
-      /* the nutrients from the rain look like the other particles: a short flight right onto the loop, then 5 s riding it */
+      /* the nutrients from the rain and from the sponge look like the other particles: a short flight onto the loop, then 5 s riding it */
       sparks = sparks.filter(function (s) {
         var age = t - s.t, FLY = 0.9, RIDE = 5;
         if (age > FLY + RIDE) { return false; }
         var x, y, al = 1;
         if (age < FLY) {
-          var k = ease(age / FLY), a0 = at(s.x, a.ground), j = pos(s.L, s.join);
-          x = a0[0] + (j[0] - a0[0]) * k; y = a0[1] + (j[1] - a0[1]) * k - Math.sin(k * Math.PI) * b.h * 0.12;
+          var k = ease(age / FLY), a0 = at(s.fx, s.fy), j = pos(s.L, s.join);
+          x = a0[0] + (j[0] - a0[0]) * k; y = a0[1] + (j[1] - a0[1]) * k - Math.sin(k * Math.PI) * b.h * 0.12 * s.lift;
         } else {
           var q = pos(s.L, s.join + s.L.speed * 2.5 * (age - FLY));
           x = q[0]; y = q[1]; al = clamp((FLY + RIDE - age) / 1.2);
@@ -204,6 +205,15 @@
       });
 
       if (!reduce) {
+        /* the sponge releases a nutrient from its side about every 3 s: it heads left, joins the lower part of its loop
+           (which runs back towards the soil) and rides it for 5 s */
+        if (done && t > nextRelease) {
+          var Ls = loops[Math.floor(Math.random() * 3)], fx = a.body.x - a.body.rx, fy = a.body.y + (Math.random() - 0.3) * a.body.ry * 0.6;
+          var from2 = at(fx, fy), join2 = 0, s3;
+          for (s3 = 0; s3 < 0.25; s3 += 0.005) { if (pos(Ls, s3)[0] < from2[0] - b.w * 0.05) { join2 = s3; break; } }
+          sparks.push({ fx: fx, fy: fy, lift: -0.5, L: Ls, join: join2, t: t, r: 1.6 + Math.random() * 1.6 });
+          nextRelease = t + 1.9 + Math.random() * 2;
+        }
         if (Math.random() < dt * 16) { var o = a.osc[Math.floor(Math.random() * 2)]; jets.push({ x: o[0], y: o[1], vx: (Math.random() - 0.5) * 0.004, t: t }); }
         jets = jets.filter(function (j) {
           var k = (t - j.t) / 2.4; if (k > 1) { return false; }
