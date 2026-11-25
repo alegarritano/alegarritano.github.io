@@ -98,7 +98,7 @@
       return out;
     }
 
-    /* the weather over the soil: sun or rain, picked at random, switching after 1 s and then every 3 s */
+    /* the weather over the soil: sun or rain, picked at random, switching after 3 s and then every 5 s */
     var firstRain = Math.random() < 0.5 ? 1 : 0, drops = [], splashes = [], sparks = [], nextDrop = 0;
     /* the sponge pumps water out of its openings, and bubbles rise around it */
     var jets = [], bubbles = [], nextBubble = 0;
@@ -130,7 +130,7 @@
       }
 
       if (!reduce) {
-        var flips = t < 1 ? 0 : 1 + Math.floor((t - 1) / 3), since = t < 1 ? t : (t - 1) % 3;
+        var flips = t < 3 ? 0 : 1 + Math.floor((t - 3) / 5), since = t < 3 ? t : (t - 3) % 5;
         var rainy = (firstRain + flips) % 2 === 1, fade = flips ? smooth(0, 0.6, since) : 1;
         var sun = rainy ? 1 - fade : fade, rain = 1 - sun, sp = at(a.sun[0], a.sun[1]), sx = sp[0], sy = sp[1];
         if (sun > 0) {
