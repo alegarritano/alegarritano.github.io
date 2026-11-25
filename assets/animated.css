@@ -71,14 +71,17 @@ figure.netglobe .rim { fill: url(#shade); stroke: #bcd1d7; stroke-width: 1; poin
 figure.netglobe .grat { fill: none; stroke: #c3d6db; stroke-width: 0.6; }
 figure.netglobe .land { fill: #dde7e3; stroke: #b9cbc8; stroke-width: 0.6; }
 figure.netglobe .route { fill: none; stroke: var(--accent); stroke-opacity: 0.65; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
-figure.netglobe.in .route { transition: stroke-dashoffset 1.73s ease-in-out var(--d); stroke-dashoffset: 0; }
+figure.netglobe.in .route { transition: stroke-dashoffset 2.3s ease-in-out var(--d); stroke-dashoffset: 0; }
 figure.netglobe .dot { fill: var(--accent); stroke: #fff; stroke-width: 2; }
 figure.netglobe .home .dot { fill: #1f4e5f; }
 figure.netglobe .ring { fill: none; stroke: var(--accent); stroke-width: 2; opacity: 0; transform-box: fill-box; transform-origin: center; }
-figure.netglobe.in .ring { animation: netping 2.93s ease-out calc(var(--d) + 1200ms) 2; }
+figure.netglobe.in .ring { animation: netping 3.9s ease-out calc(var(--d) + 1600ms) 2; }
 @keyframes netping { from { transform: scale(1); opacity: 0.8; } to { transform: scale(3); opacity: 0; } }
-figure.netglobe .pin { opacity: 0; transition: opacity 0.67s calc(var(--d) + 930ms); }
+figure.netglobe .pin { opacity: 0; transition: opacity 0.89s calc(var(--d) + 1240ms); }
 figure.netglobe.in .pin { opacity: 1; }
+figure.netglobe.in .wcopy.wait .route { transition: none; stroke-dashoffset: 1; }
+figure.netglobe.in .wcopy.wait .pin { transition: none; opacity: 0; }
+figure.netglobe.in .wcopy.wait .ring { animation: none; }
 figure.netglobe .pin-label { font: 600 17px var(--sans); fill: var(--ink-2); paint-order: stroke; stroke: rgba(244,249,250,0.95); stroke-width: 4px; }
 @media (prefers-reduced-motion: reduce) { figure.netglobe .route { stroke-dashoffset: 0; } figure.netglobe.in .ring { animation: none; } figure.netglobe .pin { transition: none; } }
 figure.netglobe .pin-label .cc { font-weight: 500; fill: var(--muted); }

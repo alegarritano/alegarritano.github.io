@@ -146,13 +146,13 @@
       sh.list.forEach(function (c, i) {
         if (c !== sh.home) {
           var r = document.createElementNS(NSs, 'path');
-          r.setAttribute('class', 'route'); r.setAttribute('pathLength', '1'); r.style.setProperty('--d', (i * 80) + 'ms');
+          r.setAttribute('class', 'route'); r.setAttribute('pathLength', '1'); r.style.setProperty('--d', (i * 106) + 'ms');
           svg.querySelector('.routes').appendChild(r);
           routes.push([r, { type: 'LineString', coordinates: [[sh.home.lon, sh.home.lat], [c.lon, c.lat]] }]);
         }
         var pg = document.createElementNS(NSs, 'g'), rad = 4 + 3 * Math.sqrt(c.papers), L = LEFT[c.city];
         pg.setAttribute('class', 'pin' + (c === sh.home ? ' home' : ''));
-        pg.style.setProperty('--d', (c === sh.home ? 0 : 400 + i * 80) + 'ms');
+        pg.style.setProperty('--d', (c === sh.home ? 0 : 530 + i * 106) + 'ms');
         pg.innerHTML = '<title>' + c.city + ': ' + c.names.join(', ') + '</title><circle class="ring" r="' + rad.toFixed(1) + '"/><circle class="dot" r="' + rad.toFixed(1) + '"/>' +
           '<text class="pin-label' + (MINOR[c.city] ? ' minor' : '') + (MINOR_PHONE[c.city] ? ' minor-phone' : '') + '" x="' + (L ? -(rad + 5) : rad + 5).toFixed(1) + '" y="5" text-anchor="' + (L ? 'end' : 'start') + '">' + c.city + ' <tspan class="cc">' + (c.country || '') + '</tspan></text>';
         svg.querySelector('.pins').appendChild(pg);
@@ -182,6 +182,22 @@
         var half = (H / 2) / kk * 180 / Math.PI, lim = Math.max(0, 90 - half);
         return [((c[0] + 540) % 360) - 180, Math.max(-lim, Math.min(lim, c[1]))];
       }
+      /* new copies made while the routes are still drawing in pick up the same point of the animation,
+         instead of appearing already drawn */
+      function syncCopies() {
+        if (reduce || !fig.classList.contains('in') || !world.getAnimations) { return; }
+        var a = world.getAnimations({ subtree: true });
+        if (!a.length) { return; }
+        var t = Math.max.apply(null, a.map(function (x) { return x.currentTime || 0; }));
+        copies.forEach(function (c) {
+          c.classList.add('wait');
+          c.querySelectorAll('.route, .pin').forEach(function (el) {
+            el.style.setProperty('--d', (parseFloat(el.style.getPropertyValue('--d')) - t) + 'ms');
+          });
+        });
+        getComputedStyle(copies[0].querySelector('.route') || copies[0]).strokeDashoffset;
+        copies.forEach(function (c) { c.classList.remove('wait'); });
+      }
       function render() {
         st.c = clampLat(st.c, st.k);
         proj.scale(st.k).center(st.c);
@@ -195,7 +211,7 @@
         k.pins.forEach(function (p) { var xy = proj([p[1].lon, p[1].lat]); p[0].setAttribute('transform', 'translate(' + xy[0].toFixed(1) + ',' + xy[1].toFixed(1) + ')'); });
         /* copies are plain duplicates of the drawn world, made only while an edge of the world is in view */
         var html = needCopies ? world.innerHTML : '';
-        if (copies[0].innerHTML !== html) { copies[0].innerHTML = html; copies[1].innerHTML = html; }
+        if (copies[0].innerHTML !== html) { copies[0].innerHTML = html; copies[1].innerHTML = html; if (html) { syncCopies(); } }
         /* city names appear only once the map has zoomed in */
         fig.classList.toggle('zoomed', st.k > START.k * 1.6);
       }
