@@ -59,12 +59,23 @@
       var x = g.rx * Math.cos(a), y = g.ry * Math.sin(a), c = Math.cos(g.tilt), s = Math.sin(g.tilt);
       return at(g.cx + x * c - y * s, g.cy + x * s + y * c);
     }
+    /* one soft glow per colour, drawn once and reused, rather than a new gradient for every dot on every frame */
+    var sprites = {};
+    function sprite(col) {
+      var k = col.join(',');
+      if (!sprites[k]) {
+        var c = document.createElement('canvas'); c.width = c.height = 128;
+        var x2 = c.getContext('2d'), g = x2.createRadialGradient(64, 64, 0, 64, 64, 64);
+        g.addColorStop(0, rgba(col, 0.95)); g.addColorStop(1, rgba(col, 0));
+        x2.fillStyle = g; x2.fillRect(0, 0, 128, 128);
+        sprites[k] = c;
+      }
+      return sprites[k];
+    }
     function dot(x, y, r, col, a) {
       r *= U;
-      var glow = r * 3;
-      var g = ctx.createRadialGradient(x, y, 0, x, y, glow * 2);
-      g.addColorStop(0, rgba(col, 0.95 * a)); g.addColorStop(1, rgba(col, 0));
-      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, glow * 2, 0, Math.PI * 2); ctx.fill();
+      var R = r * 6;
+      if (a > 0) { var ga = ctx.globalAlpha; ctx.globalAlpha = ga * a; ctx.drawImage(sprite(col), x - R, y - R, 2 * R, 2 * R); ctx.globalAlpha = ga; }
       ctx.fillStyle = 'rgba(255,255,255,' + a + ')'; ctx.beginPath(); ctx.arc(x, y, r * 0.7, 0, Math.PI * 2); ctx.fill();
     }
 
@@ -85,12 +96,23 @@
       /* if the art is slow, show it whole rather than keep the loops away */
       setTimeout(function () { if (!artOK && !done) { done = true; finish(); } }, 5000);
     }
+    /* the art scaled once to the canvas size, remade only when the banner changes size */
+    var artC = null, artKey = '';
+    function artCopy(b) {
+      var key = cv.width + 'x' + cv.height + ':' + b.x + ',' + b.y + ',' + b.w + ',' + b.h;
+      if (key !== artKey) {
+        artC = document.createElement('canvas'); artC.width = cv.width; artC.height = cv.height;
+        var c2 = artC.getContext('2d'); c2.setTransform(dpr, 0, 0, dpr, 0, 0); c2.drawImage(ART, b.x, b.y, b.w, b.h);
+        artKey = key;
+      }
+      return artC;
+    }
     function heads(xr) {
       var out = [];
       loops.forEach(function (L) {
         var prev = null;
-        for (var s = 0; s <= 400; s++) {
-          var q = pos(L, s / 400);
+        for (var s = 0; s <= 240; s++) {
+          var q = pos(L, s / 240);
           if (prev && (prev[0] - xr) * (q[0] - xr) <= 0) { out.push([xr, prev[1] + (q[1] - prev[1]) * ((xr - prev[0]) / ((q[0] - prev[0]) || 1)), L.col]); }
           prev = q;
         }
@@ -116,14 +138,16 @@
         } else {
           /* phones start at speed, so the small tip of the loops under the soil is not left on its own.
              The pace is fixed when the draw in starts, so turning a phone part way through does not make it jump. */
-          if (drawStart === null) { drawSmall = small; drawStart = t - (small ? 0 : 0.5); }
-          var u = clamp((t - drawStart) / (drawSmall ? 3.4 : DRAW)), f = drawSmall ? 1 - Math.pow(1 - u, 2.2) : ease(u);
-          var xr = at(a.X0 + (a.X1 - a.X0) * f, 0)[0], edge = 30 * U;
-          ctx.save(); ctx.beginPath(); ctx.rect(0, 0, Math.max(0, xr - edge), H); ctx.clip(); ctx.drawImage(ART, b.x, b.y, b.w, b.h); ctx.restore();
-          for (var k = 0; k < 6; k++) {
-            ctx.save(); ctx.globalAlpha = 1 - (k + 0.5) / 6; ctx.beginPath(); ctx.rect(Math.max(0, xr - edge + k * edge / 6), 0, edge / 6 + 0.5, H); ctx.clip();
-            ctx.drawImage(ART, b.x, b.y, b.w, b.h); ctx.restore();
-          }
+          /* timed on the real clock, so a slow device still finishes on time instead of drawing in slow motion */
+          var now = performance.now() / 1000;
+          if (drawStart === null) { drawSmall = small; drawStart = now - (small ? 0 : 0.5); }
+          var u = clamp((now - drawStart) / (drawSmall ? 3.4 : DRAW)), f = drawSmall ? 1 - Math.pow(1 - u, 2.2) : ease(u);
+          var xr = at(a.X0 + (a.X1 - a.X0) * f, 0)[0], edge = 30 * U, art = artCopy(b);
+          /* copies only the uncovered part of a ready scaled copy of the art, rather than scaling the full art again each frame */
+          function strip_(x0, w) { x0 = Math.max(0, x0); w = Math.min(w, W - x0); if (w > 0) { ctx.drawImage(art, x0 * dpr, 0, w * dpr, art.height, x0, 0, w, H); } }
+          strip_(0, xr - edge);
+          for (var k = 0; k < 6; k++) { ctx.globalAlpha = 1 - (k + 0.5) / 6; strip_(xr - edge + k * edge / 6, edge / 6 + 0.5); }
+          ctx.globalAlpha = 1;
           if (f > 0 && f < 1) { heads(xr - edge * 0.5).forEach(function (h) { dot(h[0], h[1], 2.4, h[2], 1); }); }
           if (f >= 1) { done = true; doneAt = t; finish(); }
         }
