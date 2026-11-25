@@ -7,6 +7,10 @@
 .strip .cycle-hint.left { left: 12px; }
 .strip .cycle-hint.right { right: 12px; }
 .strip.hover-soil .cycle-hint.left, .strip.hover-sea .cycle-hint.right { opacity: 1; transform: none; }
+/* on the first page of a visit the banner opens without its loops, and the script draws them in */
+@media (min-width: 561px) and (prefers-reduced-motion: no-preference) {
+  .js:not(.banner-drawn) .strip { background-image: url('img/banner_noloops.webp'); }
+}
 
 /* themes on the home page light up when their end of the cycle is hovered */
 .items .item { transition: background-color 0.3s, box-shadow 0.3s; border-radius: 8px; }
