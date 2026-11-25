@@ -291,8 +291,6 @@ nav.subnav { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 0.95rem; 
 .network h2 { margin-bottom: 0.4rem; }
 .network p:last-child { margin-top: 0.3rem; }
 
-/* phones get a 6 to 1 banner, half the height of the earlier 3 to 1 strip */
-@media (max-width: 560px) { .strip { aspect-ratio: 900 / 150; max-height: none; background-image: url('img/banner_phone.webp'); } }
 
 /* phones: body copy is left aligned, full justification leaves wide gaps in narrow columns */
 
