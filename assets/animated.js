@@ -154,7 +154,7 @@
       }
 
       /* once drawn, the three loops glow and the particles run */
-      var on = reduce ? 1 : clamp((t - doneAt) / 0.8);
+      var on = reduce ? 1 : done ? clamp((t - doneAt) / 0.8) : 0;
       if (wide) {
         loops.forEach(function (L) {
           ctx.save(); ctx.shadowColor = rgba(L.col, 0.9); ctx.shadowBlur = 14; ctx.strokeStyle = rgba(L.col, 0.55 * on); ctx.lineWidth = 3; ctx.beginPath();
