@@ -98,7 +98,8 @@
       var b = box(), wide = !phone();
 
       if (!done && wide && artOK) {
-        if (drawStart === null) { drawStart = t; }
+        /* starts half a second into the draw, so the loops begin to appear the moment the art is in */
+        if (drawStart === null) { drawStart = t - 0.5; }
         var f = ease(clamp((t - drawStart) / DRAW)), xr = b.x + (X0 + (X1 - X0) * f) * b.w, edge = 30;
         ctx.save(); ctx.beginPath(); ctx.rect(0, 0, Math.max(0, xr - edge), H); ctx.clip(); ctx.drawImage(ART, b.x, b.y, b.w, b.h); ctx.restore();
         for (var k = 0; k < 6; k++) {
