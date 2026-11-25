@@ -33,8 +33,9 @@
         osc: [[0.899, 0.47], [0.926, 0.46]], body: { x: 0.918, y: 0.64, rx: 0.044, ry: 0.19 }, floor: [0.855, 0.985]
       },
       phone: {
-        file: 'banner_mobile.webp', IW: 1800, IH: 300, X0: 0.055, X1: 0.80,
-        loops: [{ cx: 0.430, cy: 0.52, rx: 0.33, ry: 0.30, tilt: -0.025 }, { cx: 0.432, cy: 0.50, rx: 0.34, ry: 0.34, tilt: 0.020 }, { cx: 0.427, cy: 0.53, rx: 0.343, ry: 0.32, tilt: 0 }],
+        /* the phone art's loops were redrawn as these curves (soil to sponge, crossing in the middle), so the particles sit on them exactly */
+        file: 'banner_mobile_v2.webp', IW: 1800, IH: 300, X0: 0.17, X1: 0.89,
+        loops: [{ cx: 0.53, cy: 0.54, rx: 0.35, ry: 0.29, k: 0.11, w: 0.07 }, { cx: 0.53, cy: 0.54, rx: 0.35, ry: 0.31, k: 0.11, w: -0.07 }, { cx: 0.53, cy: 0.54, rx: 0.35, ry: 0.30, k: 0.11, w: 0 }],
         sun: [0.075, 0.127], rain: [0.1, 0.29], ground: 0.31, plants: [0.153, 0.206, 0.253], plantY: 0.28,
         osc: [[0.832, 0.467], [0.878, 0.473]], body: { x: 0.853, y: 0.667, rx: 0.045, ry: 0.2 }, floor: [0.78, 0.94]
       }
@@ -60,7 +61,9 @@
     function ease(f) { return f < 0.5 ? 4 * f * f * f : 1 - Math.pow(-2 * f + 2, 3) / 2; }
     function smooth(a, b, x) { return clamp((x - a) / (b - a)); }
     function pos(L, t) {
-      var g = A().loops[L.i], a = t * Math.PI * 2, x = g.rx * Math.cos(a), y = g.ry * Math.sin(a), c = Math.cos(g.tilt), s = Math.sin(g.tilt);
+      var g = A().loops[L.i], a = t * Math.PI * 2;
+      if (g.w !== undefined) { return at(g.cx + g.rx * Math.cos(a), g.cy + g.k * Math.cos(a) + g.ry * Math.sin(a) + g.w * Math.sin(2 * a)); }
+      var x = g.rx * Math.cos(a), y = g.ry * Math.sin(a), c = Math.cos(g.tilt), s = Math.sin(g.tilt);
       return at(g.cx + x * c - y * s, g.cy + x * s + y * c);
     }
     function dot(x, y, r, col, a) {
@@ -162,7 +165,7 @@
             if (done && Math.random() < 0.3) {
               var L = loops[Math.floor(Math.random() * 3)], from = at(d.x, a.ground), join = 0.5, s2;
               for (s2 = 0.5; s2 < 0.75; s2 += 0.005) { if (pos(L, s2)[0] > from[0] + b.w * 0.05) { join = s2; break; } }
-              sparks.push({ x: d.x, L: L, join: join, t: t, spin: Math.random() * 6 });
+              sparks.push({ x: d.x, L: L, join: join, t: t, r: 1.6 + Math.random() * 1.6 });
             }
             return false;
           }
@@ -187,7 +190,7 @@
         dot(q[0], q[1], p.r, p.L.col, on);
         if (p.label && W >= 600) { ctx.font = '700 11px Inter, sans-serif'; ctx.fillStyle = rgba(p.L.col, on); ctx.fillText(p.L.el, q[0] + 6, q[1] - 6); }
       });
-      /* the nutrients from the rain: a short flight right onto the loop, then 5 s riding it, turning as they go */
+      /* the nutrients from the rain look like the other particles: a short flight right onto the loop, then 5 s riding it */
       sparks = sparks.filter(function (s) {
         var age = t - s.t, FLY = 0.9, RIDE = 5;
         if (age > FLY + RIDE) { return false; }
@@ -199,14 +202,7 @@
           var q = pos(s.L, s.join + s.L.speed * 2.5 * (age - FLY));
           x = q[0]; y = q[1]; al = clamp((FLY + RIDE - age) / 1.2);
         }
-        var r = small ? 1.1 : 1.8;
-        dot(x, y, r, s.L.col, al);
-        var ang = s.spin + age * 4, arm = r * 3.2;
-        ctx.strokeStyle = 'rgba(255,255,255,' + 0.8 * al + ')'; ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(x - Math.cos(ang) * arm, y - Math.sin(ang) * arm); ctx.lineTo(x + Math.cos(ang) * arm, y + Math.sin(ang) * arm);
-        ctx.moveTo(x + Math.sin(ang) * arm, y - Math.cos(ang) * arm); ctx.lineTo(x - Math.sin(ang) * arm, y + Math.cos(ang) * arm);
-        ctx.stroke();
+        dot(x, y, s.r, s.L.col, al);
         return true;
       });
 
