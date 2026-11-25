@@ -146,13 +146,13 @@
       sh.list.forEach(function (c, i) {
         if (c !== sh.home) {
           var r = document.createElementNS(NSs, 'path');
-          r.setAttribute('class', 'route'); r.setAttribute('pathLength', '1'); r.style.setProperty('--d', (i * 60) + 'ms');
+          r.setAttribute('class', 'route'); r.setAttribute('pathLength', '1'); r.style.setProperty('--d', (i * 80) + 'ms');
           svg.querySelector('.routes').appendChild(r);
           routes.push([r, { type: 'LineString', coordinates: [[sh.home.lon, sh.home.lat], [c.lon, c.lat]] }]);
         }
         var pg = document.createElementNS(NSs, 'g'), rad = 4 + 3 * Math.sqrt(c.papers), L = LEFT[c.city];
         pg.setAttribute('class', 'pin' + (c === sh.home ? ' home' : ''));
-        pg.style.setProperty('--d', (c === sh.home ? 0 : 300 + i * 60) + 'ms');
+        pg.style.setProperty('--d', (c === sh.home ? 0 : 400 + i * 80) + 'ms');
         pg.innerHTML = '<title>' + c.city + ': ' + c.names.join(', ') + '</title><circle class="ring" r="' + rad.toFixed(1) + '"/><circle class="dot" r="' + rad.toFixed(1) + '"/>' +
           '<text class="pin-label' + (MINOR[c.city] ? ' minor' : '') + (MINOR_PHONE[c.city] ? ' minor-phone' : '') + '" x="' + (L ? -(rad + 5) : rad + 5).toFixed(1) + '" y="5" text-anchor="' + (L ? 'end' : 'start') + '">' + c.city + ' <tspan class="cc">' + (c.country || '') + '</tspan></text>';
         svg.querySelector('.pins').appendChild(pg);
