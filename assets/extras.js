@@ -145,10 +145,21 @@
       var svg = fig.querySelector('svg'), routes = [], pins = [];
       sh.list.forEach(function (c, i) {
         if (c !== sh.home) {
-          var r = document.createElementNS(NSs, 'path');
-          r.setAttribute('class', 'route'); r.setAttribute('pathLength', '1'); r.style.setProperty('--d', (i * 106) + 'ms');
-          svg.querySelector('.routes').appendChild(r);
-          routes.push([r, { type: 'LineString', coordinates: [[sh.home.lon, sh.home.lat], [c.lon, c.lat]] }]);
+          /* a route that crosses the 180 degree line is drawn as one unbroken line twice, a world apart, so it leaves
+             one edge and comes back in at the other at the same moment (a single dashed line restarts at each break) */
+          var gi = window.d3.geoInterpolate([sh.home.lon, sh.home.lat], [c.lon, c.lat]), pts = [], lon0 = null;
+          for (var s = 0; s <= 96; s++) {
+            var p = gi(s / 96), lon = p[0];
+            if (lon0 !== null) { while (lon - lon0 > 180) { lon -= 360; } while (lon - lon0 < -180) { lon += 360; } }
+            pts.push([lon, p[1]]); lon0 = lon;
+          }
+          var cross = pts.some(function (q) { return q[0] > 180 || q[0] < -180; });
+          (cross ? [0, pts[pts.length - 1][0] > 180 ? -360 : 360] : [null]).forEach(function (shift) {
+            var r = document.createElementNS(NSs, 'path');
+            r.setAttribute('class', cross ? 'route wrap' : 'route'); r.setAttribute('pathLength', '1'); r.style.setProperty('--d', (i * 106) + 'ms');
+            svg.querySelector('.routes').appendChild(r);
+            routes.push([r, shift === null ? { type: 'LineString', coordinates: [[sh.home.lon, sh.home.lat], [c.lon, c.lat]] } : pts, shift]);
+          });
         }
         var pg = document.createElementNS(NSs, 'g'), rad = 4 + 3 * Math.sqrt(c.papers), L = LEFT[c.city];
         pg.setAttribute('class', 'pin' + (c === sh.home ? ' home' : ''));
@@ -207,7 +218,13 @@
         needCopies = Math.abs(st.c[0]) + (W / 2) / st.k * 180 / Math.PI > 179;
         gratP.setAttribute('d', path(sh.grat));
         landP.setAttribute('d', path(sh.land));
-        k.routes.forEach(function (r) { r[0].setAttribute('d', path(r[1]) || ''); });
+        k.routes.forEach(function (r) {
+          if (r[2] === null || r[2] === undefined) { r[0].setAttribute('d', path(r[1]) || ''); return; }
+          r[0].setAttribute('d', 'M' + r[1].map(function (q) {
+            var L = q[0] + r[2], w = ((L + 180) % 360 + 360) % 360 - 180, xy = proj([w, q[1]]);
+            return (xy[0] + Math.round((L - w) / 360) * span).toFixed(1) + ',' + xy[1].toFixed(1);
+          }).join('L'));
+        });
         k.pins.forEach(function (p) { var xy = proj([p[1].lon, p[1].lat]); p[0].setAttribute('transform', 'translate(' + xy[0].toFixed(1) + ',' + xy[1].toFixed(1) + ')'); });
         /* copies are plain duplicates of the drawn world, made only while an edge of the world is in view */
         var html = needCopies ? world.innerHTML : '';

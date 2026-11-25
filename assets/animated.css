@@ -82,6 +82,7 @@ figure.netglobe.in .pin { opacity: 1; }
 figure.netglobe.in .wcopy.wait .route { transition: none; stroke-dashoffset: 1; }
 figure.netglobe.in .wcopy.wait .pin { transition: none; opacity: 0; }
 figure.netglobe.in .wcopy.wait .ring { animation: none; }
+figure.netglobe .wcopy .route.wrap { display: none; }
 figure.netglobe .pin-label { font: 600 17px var(--sans); fill: var(--ink-2); paint-order: stroke; stroke: rgba(244,249,250,0.95); stroke-width: 4px; }
 @media (prefers-reduced-motion: reduce) { figure.netglobe .route { stroke-dashoffset: 0; } figure.netglobe.in .ring { animation: none; } figure.netglobe .pin { transition: none; } }
 figure.netglobe .pin-label .cc { font-weight: 500; fill: var(--muted); }
