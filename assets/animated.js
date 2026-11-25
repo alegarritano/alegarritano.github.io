@@ -10,9 +10,6 @@
     cv.className = 'cycle';
     cv.setAttribute('aria-hidden', 'true');
     strip.appendChild(cv);
-    var hintL = document.createElement('span'); hintL.className = 'cycle-hint left'; hintL.textContent = 'Soils';
-    var hintR = document.createElement('span'); hintR.className = 'cycle-hint right'; hintR.textContent = 'Marine hosts';
-    strip.appendChild(hintL); strip.appendChild(hintR);
 
     var ctx = cv.getContext('2d'), W = 0, H = 0, dpr = 1;
     function size() {

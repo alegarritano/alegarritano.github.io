@@ -3,12 +3,6 @@
 /* 1. the element cycle in the banner */
 .strip { position: relative; overflow: hidden; }
 .strip canvas.cycle { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.strip .cycle-hint { position: absolute; top: 8px; padding: 3px 9px; border-radius: 999px; background: rgba(0,16,36,0.6); color: #fff; font: 600 12px/1.4 var(--sans); opacity: 0; transform: translateY(-4px); transition: opacity 0.25s, transform 0.25s; pointer-events: none; }
-.strip .cycle-hint.left { left: 12px; }
-.strip .cycle-hint.right { right: 12px; }
-.strip.hover-soil .cycle-hint.left, .strip.hover-sea .cycle-hint.right { opacity: 1; transform: none; }
-/* the hover labels are for a mouse; on touch screens a tap would leave them over the banner */
-@media (hover: none) { .strip .cycle-hint { display: none; } }
 /* on the first page of a visit the banner opens without its loops, and the script draws them in */
 @media (prefers-reduced-motion: no-preference) {
   .js:not(.banner-drawn) .strip { background-image: url('img/banner_noloops.webp'); }
