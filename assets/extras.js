@@ -131,6 +131,14 @@
 
     /* shared drawing: routes from Sydney, dots with names and country codes */
     function scaffold(fig, sh, label, extraDefs, under) {
+      /* the built-in map may already be drawing in: carry on from the same point instead of restarting */
+      var ran = fig.classList.contains('in') && fig.dataset.t0 && !reduce ? performance.now() - fig.dataset.t0 : null;
+      if (ran !== null && fig.getAnimations) {
+        /* the real time since the draw-in started, which can be later than the moment the class was added */
+        var anims = fig.getAnimations({ subtree: true }).filter(function (a) { return a.currentTime !== null; });
+        if (anims.length) { ran = Math.max.apply(null, anims.map(function (a) { return a.currentTime; })); }
+      }
+      if (ran !== null) { fig.classList.remove('in'); }
       fig.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + label + ': ' +
         sh.list.filter(function (c) { return c !== sh.home; }).map(function (c) { return c.city; }).join(', ') + '">' +
         '<defs>' + extraDefs + '</defs>' + under + '</svg>';
@@ -150,6 +158,12 @@
         svg.querySelector('.pins').appendChild(pg);
         pins.push([pg, c]);
       });
+      if (ran !== null) {
+        svg.querySelectorAll('.route, .pin').forEach(function (el) {
+          el.style.setProperty('--d', (parseFloat(el.style.getPropertyValue('--d')) - ran) + 'ms');
+        });
+        getComputedStyle(svg.querySelector('.route')).strokeDashoffset; fig.classList.add('in');
+      }
       return { svg: svg, routes: routes, pins: pins };
     }
 
